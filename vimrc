@@ -172,7 +172,7 @@ if has("gui_running")
     endif
 endif
 
-"set wrap
+set wrap
 
 "if version > 720
 "	set undofile
