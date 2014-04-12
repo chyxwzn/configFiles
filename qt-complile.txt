@@ -1,0 +1,46 @@
+http://software.intel.com/sites/landingpage/tw/graphics-acceleration-for-html5-and-java-script-engine-jit-optimization-for-mobile-devices.php
+
+gmake confclean
+
+./configure -prefix ./Install -embedded arm -xplatform qws/linux-arm-hisi-g++ -webkit -qt-gfx-directfb -no-cups -no-stl -no-qvfb -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-xmlpatterns -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -shared -debug
+
+./configure -prefix ./Install -xplatform qws/linux-x86-g++ -webkit -no-x11
+
+./configure -prefix ./Install -webkit -no-dbus -fast
+
+./configure -prefix ./Install -webkit -no-cups -no-stl -qvfb -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-xmlpatterns -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -shared -nomake demos -nomake examples -nomake docs
+
+./configure -prefix ./Install -webkit -no-dbus -fast -qt-gfx-directfb -nomake examples -no-cups -no-stl -no-qvfb -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-xmlpatterns -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -shared
+
+
+./configure -prefix ./Install -embedded x86 -qvfb -webkit -no-dbus -fast -plugin-gfx-directfb -qt-gfx-directfb -shared -no-glib -qt-libpng -qt-libjpeg -qt-libmng -no-qt3support -nomake examples -nomake demos -nomake docs
+
+#directfb qt4.8.2
+./configure -prefix ./Install -embedded x86 -qvfb -webkit -no-dbus -fast -plugin-gfx-directfb -qt-gfx-directfb -shared -no-glib -no-libmng -no-qt3support -no-declarative -no-declarative-debug -nomake examples -nomake demos -nomake docs
+
+./configure -prefix ./Install -embedded x86 -qvfb -webkit -no-dbus -fast -qt-gfx-directfb -shared -no-glib -no-libmng -no-qt3support -no-declarative -no-declarative-debug -nomake examples -nomake demos -nomake docs
+
+./configure -prefix ./Install -embedded x86 -qvfb -webkit -no-dbus -qt-gfx-directfb -shared -no-glib -no-libmng -no-qt3support -no-declarative -no-declarative-debug -nomake examples -nomake demos -nomake docs
+
+./configure -prefix ./Install -embedded x86 -qvfb -webkit -no-dbus -qt-gfx-qvfb -qt-mouse-qvfb -qt-kbd-qvfb -shared -no-glib -no-libmng -no-qt3support -no-declarative -no-declarative-debug -nomake examples -nomake demos -nomake docs
+
+./configure -prefix ./Install -embedded arm -xplatform qws/linux-arm-hisi-g++ -webkit -qt-gfx-directfb -no-cups -no-stl -no-qvfb -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-xmlpatterns -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -shared -fast -nomake demos -nomake examples -nomake docs
+
+#x86
+./configure -prefix ./Install -qvfb -shared
+
+#embedded x86 framebuffer
+./configure -prefix ./Install -embedded x86 -webkit -qvfb -shared -no-cups -no-stl -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-xmlpatterns -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -nomake demos -nomake examples -nomake docs
+
+#embedded arm framebuffer
+./configure -prefix ./Install -embedded arm -xplatform qws/linux-arm-hisi-g++ -webkit -qvfb -no-cups -no-stl -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-xmlpatterns -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -nomake demos -nomake examples -nomake docs
+
+#embedded arm directfb
+./configure -prefix ./Install -embedded arm -xplatform qws/linux-arm-hisi-g++ -webkit -release -shared -fast -opensource -confirm-license -qt-gfx-directfb -no-gfx-linuxfb -no-gfx-transformed -no-gfx-multiscreen -no-gfx-vnc -no-cups -no-stl -no-gfx-qvfb -no-largefile -no-exceptions -no-accessibility -no-stl -no-qt3support -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -qt-zlib -qt-libjpeg -qt-libpng -qt-freetype -nomake demos -nomake examples -nomake docs -nomake tools -nomake translations
+
+#embedded x86 directfb
+./configure -prefix ./Install -embedded x86 -xplatform qws/linux-x86-g++ -webkit -release -shared -fast -opensource -confirm-license -qt-gfx-directfb -no-gfx-linuxfb -no-gfx-transformed -no-gfx-multiscreen -no-gfx-vnc -no-cups -no-stl -no-gfx-qvfb -no-largefile -no-exceptions -no-stl -no-accessibility -no-qt3support -no-audio-backend -no-phonon -no-phonon-backend -script -no-declarative -no-declarative-debug -no-separate-debug-info -no-pch -no-iconv -no-cups -no-nis -no-libtiff -no-mmx -no-3dnow -no-sse -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-neon -no-gtkstyle -no-nas-sound -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm -no-xinput -no-xkb -no-glib -no-libmng -qt-zlib -qt-libjpeg -qt-libpng -qt-freetype -nomake demos -nomake examples -nomake docs -nomake tools -nomake translations
+
+./configure -prefix ./Install -xplatform qws/linux-x86-g++ -release -shared -fast -opensource -confirm-license -nomake demos -nomake examples -nomake docs -nomake tools -nomake translations
+
+./configure -prefix ./Install -xplatform linux-g++ -fully-process -debug -shared -opensource -confirm-license -no-c++11 -directfb -qpa directfb -no-eglfs -no-kms -no-linuxfb -no-xcb -no-cups -no-largefile -no-pch -no-iconv -no-cups -no-nis -no-avx -no-neon -no-gtkstyle -no-openvg -no-sm -no-xshape -no-xvideo -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrender -no-sse2 -no-sse3 -no-sse4.1 -no-sse4.2 -no-mitshm -no-xinput -no-xkb -no-glib -no-opengl -qt-zlib -qt-libjpeg -qt-libpng -qt-freetype -nomake tools -v
