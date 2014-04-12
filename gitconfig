@@ -1,0 +1,21 @@
+"git config --list
+
+user.name=chyxwzn
+user.email=chyxwzn@gmail.com
+merge.tool=vimdiff
+credential.helper=cache --timeout=36000
+diff.tool=vimdiff
+difftool.prompt=false
+alias.d=difftool
+color.diff=always
+color.grep=always
+http.proxy=127.0.0.1:8087
+grep.linenumber=true
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+remote.origin.url=https://chyxwzn@github.com/chyxwzn/configFiles.git
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
