@@ -1,46 +1,21 @@
 " .vimrc
 "Pathogen
 call pathogen#infect()
+call pathogen#helptags()
 
 "============== Filetype stuff ===============
-filetype plugin on
-filetype indent on
-
+filetype plugin indent on
+syntax enable
+syntax on
 
 " Load custom settings
 
 " Color Settings
-" color wombat256
-"color xterm16
-" color railscasts
-" color molokai
-" color skittles_dark
 set background=dark
 " set background=light
 color skittles_berry
-" color desert_my
-" color badwolf
 " let g:solarized_termcolors=256
 " color solarized
-
-" """ FocusMode
-" function! ToggleFocusMode()
-" 	if (&foldcolumn != 12)
-" 		set laststatus=0
-" 		set numberwidth=10
-" 		set foldcolumn=12
-" 		set noruler
-" 		hi FoldColumn ctermbg=none
-" 		hi LineNr ctermfg=0 ctermbg=none
-" 		hi NonText ctermfg=0
-" 	else
-" 		set laststatus=2
-" 		set numberwidth=4
-" 		set foldcolumn=0
-" 		set ruler
-" 		colorscheme skittles_berry "re-call your colorscheme
-" 	endif
-" endfunc
 
 """"""""""""""""""""""""""""""
 " Visual
@@ -65,20 +40,20 @@ func! WriteFormat()
 	:%s/\v\s*$//g
 endfunc
 
+let g:autoSessionFile=".forvim/.project.vim"
+let g:origPwd=getcwd()
 func! EnterHandler()
 	exe "source ".g:autoSessionFile
-	exe "rviminfo ".g:autoViminfoFile
-	if filereadable("tags")
-		set tags+=tags
+	if filereadable(".forvim/tags")
+		set tags+=.forvim/tags
 	endif
-	if filereadable(".projectx.vim")
-		exe "source .projectx.vim"
+	if filereadable(".forvim/.projectx.vim")
+		exe "source .forvim/.projectx.vim"
 	endif
 endfunction
 func! LeaveHandler()
 	exec "NERDTreeClose"
 	exec "mks! ".g:origPwd."/".g:autoSessionFile
-	exec "wviminfo! ".g:origPwd."/".g:autoViminfoFile
 endfunction
 
 command! BcloseOthers call <SID>BufCloseOthers()  
@@ -99,7 +74,6 @@ endfunction
 "Get out of VI's compatible mode..
 set nocompatible
 let g:mapleader = ","
-"let mapleader = '\'
 set dict=/usr/share/dict/words
 "set cursorline
 " setlocal spell spelllang=en_us
@@ -107,9 +81,8 @@ set showcmd
 set ruler
 set incsearch
 set wildmenu
-syntax on
 set synmaxcol=0
-"set term=xterm-256color
+set term=xterm-256color
 set shortmess=aAIsT
 set cmdheight=2
 set nowrap
@@ -123,7 +96,7 @@ set autowrite
 set completeopt=menu
 set mousemodel=popup
 set backspace=indent,eol,start  " backspacing over everything in insert mode
-set wildignore+=*.bak,*.o,*.e,*~,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
+set wildignore+=*.bak,*.bk,*/.git/*,*/.svn/*,*.o,*.e,*~,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
 set number
 set cinoptions+=g0
 
@@ -238,7 +211,7 @@ let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_auto_start_csharp_server = 0
 let g:ycm_key_invoke_completion = '<Alt-/>'
 " let g:curWorkingDir=getcwd()
-let g:ycm_global_ycm_extra_conf = '.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = g:origPwd.'/.forvim/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_always_populate_location_list = 1
 
@@ -250,11 +223,8 @@ let g:syntastic_c_checkers = ['make']
 let g:syntastic_cpp_checkers = ['gcc']
 let g:syntastic_check_on_open = 1
 "
-" auto save and load session and viminfo
-let g:autoSessionFile=".project.vim"
-let g:autoViminfoFile=".project.viminfo"
-let g:origPwd=getcwd()
-if filereadable(g:autoSessionFile) && filereadable(g:autoViminfoFile)
+" auto save and load session
+if filereadable(g:autoSessionFile)
 	if argc() == 0
 		au VimEnter * call EnterHandler()
 		au VimLeave * call LeaveHandler()
@@ -270,19 +240,12 @@ let g:UltiSnipsJumpForwardTrigger="<C-f>"
 let g:UltiSnipsJumpBackwardTrigger="<C-b>"
 let g:UltiSnipsSnippetDirectories=["mySnippets"]
 
-" let g:tagbar_show_linenumbers = 1
+let g:tagbar_show_linenumbers = 1
 " let g:tagbar_autopreview = 1
 
 " let g:indentLine_color_gui = '#A4E57E'
 " let g:indentLine_color_term = 239
 let g:indentLine_loaded=1
-
-"Eclim
-let g:EclimCompletionMethod = 'omnifunc'
-let g:EclimLocationListHeight=5
-" let g:EclimJavaSearchSingleResult='lopen'
-" let g:EclimJavaDocSearchSingleResult='lopen'
-
 
 " make type colon easily 
 no ; :
@@ -300,10 +263,10 @@ nmap <silent><leader><leader>wf :call WriteFormat()<cr>:w<cr>
 
 "============== Custom Mappings ===============
 " general mapping
-nno <Leader>h :tabprevious<CR>
-nno <Leader>l :tabnext<CR>
-nmap <Leader>tn :tabnew %:p<CR>
-nmap <leader>tc :tabclose<CR>
+" nno <Leader>h :tabprevious<CR>
+" nno <Leader>l :tabnext<CR>
+" nmap <Leader>tn :tabnew %:p<CR>
+" nmap <leader>tc :tabclose<CR>
 
 " diff
 nmap ]c ]czz
@@ -322,14 +285,12 @@ nmap N Nzz
 nmap } }zz
 nmap { {zz
 
-"open tag in new tab
-map <leader><C-]> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+"open tag in new window
+map <leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
 
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
 vnoremap <silent> # :call VisualSearch('b')<CR>
-
-"noremap <F1> :call ToggleFocusMode()<cr>
 
 "Smart way to move btw. windows
 nmap <C-J> <C-W>j
@@ -405,13 +366,12 @@ vmap <Enter> <Plug>(EasyAlign)
 cnoremap <C-a>  <Home>
 cnoremap <C-e>  <End>
 
-nnoremap <silent> <leader>pt :ProjectTreeToggle<cr>
-nnoremap <silent> <leader>jio :JavaImportOrganize<cr>
-" nnoremap <silent> <leader>ds :JavaDocSearch -x declarations<cr>
-nnoremap <silent> <leader>jsc :JavaSearchContext<cr>
-nnoremap <silent> <Leader>jc :JavaCorrect<cr>
-nnoremap <silent> <leader>dp :JavaDocPreview<cr>
-nnoremap <silent> <leader>jf :%JavaFormat<cr>
-nnoremap <silent> <leader>jg :JavaGet<cr> 
-nnoremap <silent> <leader>js :JavaSet<cr>
-nnoremap <silent> <leader><leader>ji :JavaImpl<cr>
+let g:lt_location_list_toggle_map = '<leader><leader>l'
+let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
+
+let g:ctrlp_map = '<leader><c-p>'
+let g:ctrlp_use_caching = 1
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_cache_dir = g:origPwd."/.forvim"
+map <C-p> :exec("CtrlP ".g:origPwd)<CR>
+map <leader><leader>s :setlocal spell! spelllang=en_US<CR>
