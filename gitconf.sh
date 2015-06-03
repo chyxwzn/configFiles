@@ -10,3 +10,4 @@ git config --global alias.d difftool
 git config --global color.diff always
 git config --global color.grep always
 git config --global grep.linenumber true
+git config --global http.sslVerify false
