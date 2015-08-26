@@ -1,9 +1,9 @@
 " .vimrc
-"Pathogen
+" Pathogen
 call pathogen#infect()
 call pathogen#helptags()
 
-"============== Filetype stuff ===============
+" Filetype
 filetype plugin indent on
 syntax enable
 syntax on
@@ -17,10 +17,31 @@ color skittles_berry
 " let g:solarized_termcolors=256
 " color solarized
 
-""""""""""""""""""""""""""""""
-" Visual
-""""""""""""""""""""""""""""""
-" From an idea by Michael Naumann
+" ======= functions =======
+" " FocusMode
+" function! ToggleFocusMode()
+" 	if (&foldcolumn != 12)
+" 		set laststatus=0
+" 		set numberwidth=10
+" 		set foldcolumn=12
+" 		set noruler
+" 		hi FoldColumn ctermbg=none
+" 		hi LineNr ctermfg=0 ctermbg=none
+" 		hi NonText ctermfg=0
+" 	else
+" 		set laststatus=2
+" 		set numberwidth=4
+" 		set foldcolumn=0
+" 		set ruler
+" 		colorscheme skittles_berry "re-call your colorscheme
+" 	endif
+" endfunc
+fun! Replace() 
+    let s:word = input("Replace " . expand('<cword>') . " with:") 
+    :exe 'bufdo! %s/\<' . expand('<cword>') . '\>/' . s:word . '/ge' 
+    :unlet! s:word 
+endfun 
+
 function! VisualSearch(direction) range
 	let l:saved_reg = @"
 	execute "normal! vgvy"
@@ -40,20 +61,25 @@ func! WriteFormat()
 	:%s/\v\s*$//g
 endfunc
 
-let g:autoSessionFile=".forvim/.project.vim"
+let g:autoSessionFile=".project.vim"
+let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
 func! EnterHandler()
-	exe "source ".g:autoSessionFile
-	if filereadable(".forvim/tags")
-		set tags+=.forvim/tags
+	if filereadable(g:autoSessionFile)
+        exe "source ".g:autoSessionFile
 	endif
-	if filereadable(".forvim/.projectx.vim")
-		exe "source .forvim/.projectx.vim"
+	if filereadable(g:viminfoFile)
+		exe "rviminfo ".g:viminfoFile
+	endif
+	if filereadable("tags")
+		set tags+=tags
 	endif
 endfunction
+
 func! LeaveHandler()
 	exec "NERDTreeClose"
-	exec "mks! ".g:origPwd."/".g:autoSessionFile
+	exec "mksession! ".g:origPwd."/".g:autoSessionFile
+	exec "wviminfo ".g:origPwd."/".g:viminfoFile
 endfunction
 
 command! BcloseOthers call <SID>BufCloseOthers()  
@@ -74,31 +100,39 @@ endfunction
 "Get out of VI's compatible mode..
 set nocompatible
 let g:mapleader = ","
+" Switch from block-cursor to vertical-line-cursor when going into/out of
+" insert mode
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 set dict=/usr/share/dict/words
 "set cursorline
 " setlocal spell spelllang=en_us
-set showcmd
-set ruler
-set incsearch
-set wildmenu
-set synmaxcol=0
-set term=xterm-256color
+set showcmd " Show (partial) command in the last line of the screen.
+set ruler " Show the line and column number of the cursor position, separated by a comma.
+set incsearch " While typing a search command, show where the pattern, as it was typed so far, matches.
+set wildmenu " When 'wildmenu' is on, command-line completion operates in an enhanced mode.
+if !has("win32")
+    set term=xterm-256color " colored airline
+endif
 set shortmess=aAIsT
 set cmdheight=2
-set nowrap
-let &scrolloff=999-&scrolloff
+" set nowrap
+set wrap " When on, lines longer than the width of the window will wrap and displaying continues on the next line.
+let &scrolloff=999 " the cursor line will always be in the middle of the window
 set smartcase
-set autoread                    " read open files again when changed outside Vim
+set autoread " read open files again when changed outside Vim
 set autowrite
 
-" set hidden
-" set completeopt=preview
+set hidden " hide buffers instead of closing them this
+           " means that the current buffer can be put
+           " to background without being written; and
+           " that marks and undo history are preserved
 set completeopt=menu
-set mousemodel=popup
+set mousemodel=popup " Sets the model to use for the mouse.
 set backspace=indent,eol,start  " backspacing over everything in insert mode
-set wildignore+=*.bak,*.bk,*/.git/*,*/.svn/*,*.o,*.e,*~,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
+set wildignore+=*.bak,*.bk,*/.git/*,*/.svn/*,*.o,*.e,*~,*.pyc,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
 set number
-set cinoptions+=g0
+set cinoptions+=g0 " Place C++ scope declarations 0 characters from the indent of the block they are in.
 
 set enc=utf-8
 " Chinese
@@ -120,9 +154,16 @@ if has("multi_byte")
     set fileencoding=utf-8 
   endif 
 endif 
-set fileformat=unix
+" set fileformat=unix
+set fileformats=unix,dos
 " set fillchars=vert:|
 
+let $LANG='en'
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" indent options
 set expandtab
 set tabstop=4
 set shiftwidth=4
@@ -133,7 +174,6 @@ set linespace=0
 set history=1000
 
 set laststatus=2
-set ffs=unix,dos
 if has("gui_running")
     if has("win32")
         set guifont=Courier\ New:h12
@@ -145,40 +185,31 @@ if has("gui_running")
     endif
 endif
 
-set wrap
-
-"if version > 720
-"	set undofile
-"	set undodir=~/vimundo/
-"endif
-
 "Do not redraw, when running macros.. lazyredraw
 set lz
 
 "Highlight search things
 set hlsearch
-
 "Set magic on
 set magic
-
 "show matching bracets
 set showmatch
 
 "Restore cursor to file position in previous editing session
-set viminfo='10,\"100,:20,n~/.viminfo
+" set viminfo='10,\"100,:20,n~/.viminfo
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 set sessionoptions-=curdir
 set sessionoptions+=sesdir
 
 "Turn backup off
 set nobackup
-set nowb
+set nowritebackup
 set noswapfile
 
 "Enable folding, I find it very useful
-set fen
-set fdl=0
-"set foldmethod=indent
+set foldenable
+set foldlevel=0
+set foldmethod=syntax
 
 "C-style indeting
 set cindent
@@ -186,9 +217,22 @@ set cindent
 set previewheight=10
 " set splitbelow
 
-if has("win32")
-    let g:tagbar_ctags_bin = 'F:\Program\ Files\Vim\vim74\ctags.exe'
-endif
+set clipboard=unnamed	" yank to the system register (*) by default
+" set pastetoggle=<F5>
+nmap <leader>pm :setlocal paste!<BAR>setlocal paste?<CR>
+
+" if has("win32")
+"     let g:tagbar_ctags_bin = 'F:\Program\ Files\Vim\vim74\ctags.exe'
+" endif
+
+" => Turn persistent undo on 
+"    means that you can undo even when you close a buffer/VIM
+try
+    set undodir=~/.temp_dirs/undodir
+    set undofile
+catch
+endtry
+
 
 " airline setting
 let g:airline_left_sep=''
@@ -206,23 +250,23 @@ endif
 
 let g:EasyMotion_leader_key = '<Leader>'
 
-" let g:loaded_youcompleteme=1
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_auto_start_csharp_server = 0
-let g:ycm_key_invoke_completion = '<Alt-/>'
+let g:ycm_key_invoke_completion = '<C-/>'
 " let g:curWorkingDir=getcwd()
-let g:ycm_global_ycm_extra_conf = g:origPwd.'/.forvim/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_always_populate_location_list = 1
+if !filereadable(g:ycm_global_ycm_extra_conf)
+    let g:loaded_youcompleteme=1
+endif
 
 let g:loaded_syntastic_plugin = 1
-
 let g:syntastic_auto_jump = 2
-
 let g:syntastic_c_checkers = ['make']
 let g:syntastic_cpp_checkers = ['gcc']
 let g:syntastic_check_on_open = 1
-"
+
 " auto save and load session
 if filereadable(g:autoSessionFile)
 	if argc() == 0
@@ -233,6 +277,7 @@ endif
 
 autocmd Filetype java setlocal omnifunc=javacomplete#Complete
 autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
+au BufRead,BufNewFile *.js set ft=javascript syntax=jquery
 
 let g:did_UltiSnips_plugin=1
 let g:UltiSnipsExpandTrigger="<C-f>"
@@ -248,69 +293,88 @@ let g:tagbar_show_linenumbers = 1
 let g:indentLine_loaded=1
 
 " make type colon easily 
-no ; :
+nnoremap ; :
+vnoremap ; :
+" Quickly get out of insert mode without your fingers having to leave the
+" home row (either use 'jj' or 'jk')
+inoremap jj <ESC>
+" Treat long lines as break lines (useful when moving around in them)
+map j gj
+map k gk
+" Use shift-H and shift-L for move to beginning/end
+nnoremap H 0
+nnoremap L $
+nnoremap <silent>m :cal cursor(line("."), col("$") - (col("$") - col("."))/2)<cr>
+nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
 
 "Fast remove highlight search
-nmap <silent> <leader>nh :noh<cr>
+nnoremap <silent><leader><cr> :noh<cr>
 
 " move current line
 nno <C-Down> ddp
 nno <C-Up> ddkP
 
-" fast save
-nmap <silent><leader>s :w<CR>
-nmap <silent><leader><leader>wf :call WriteFormat()<cr>:w<cr>
+" Reselect text that was just pasted with ,v
+nnoremap <leader>v V`]
 
-"============== Custom Mappings ===============
-" general mapping
+" fast save
+nnoremap <silent><leader>s :w!<CR>
+nnoremap <silent><leader>W :call WriteFormat()<cr>:w!<cr>
+
 " nno <Leader>h :tabprevious<CR>
 " nno <Leader>l :tabnext<CR>
-" nmap <Leader>tn :tabnew %:p<CR>
-" nmap <leader>tc :tabclose<CR>
+" nnoremap <Leader>tn :tabnew %:p<CR>
+" nnoremap <leader>tc :tabclose<CR>
 
 " diff
-nmap ]c ]czz
-nmap [c [czz
+nnoremap ]c ]czz
+nnoremap [c [czz
 
 " default to very magic
 "no / /\v
 
-" gO to create a new line below cursor in normal mode
-nmap go O<ESC>jo<ESC>k
+" gO to create a new line above and below cursor in normal mode
+nnoremap go O<ESC>jo<ESC>k
 
 "I really hate that things don't auto-center
-nmap G Gzz
-nmap n nzz
-nmap N Nzz
-nmap } }zz
-nmap { {zz
+nnoremap G Gzz
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap } }zz
+nnoremap { {zz
 
 "open tag in new window
 map <leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
 
+" Ctrl-[ jump out of the tag stack (undo Ctrl-])
+map <C-[> <ESC>:po<CR>
+
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
 vnoremap <silent> # :call VisualSearch('b')<CR>
+"replace the current word in all opened buffers
+vnoremap <leader>R :call Replace()<CR>
 
+" allow multiple indentation/deindentation in visual mode
+vnoremap < <gv
+vnoremap > >gv
+
+"noremap <F1> :call ToggleFocusMode()<cr>
 "Smart way to move btw. windows
-nmap <C-J> <C-W>j
-nmap <C-K> <C-W>k
-nmap <C-H> <C-W>h
-nmap <C-L> <C-W>l
-" nmap <C-C> <C-W>c
-
-nmap <silent> <leader>tl :TlistToggle<cr>
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-H> <C-W>h
+nnoremap <C-L> <C-W>l
 
 nnoremap <silent> <leader>tb :TagbarToggle<CR>
-
-nmap <silent> <Leader>mt :MBEToggle<cr>
+nnoremap <silent> <Leader>mt :MBEToggle<cr>
 
 " NERDTree setting
 nnoremap <silent> <leader>nt :NERDTreeToggle<cr>
 nnoremap <silent> <leader>nf :NERDTreeFind<CR>
 
 if has("win32")
-    noremap <silent> <leader>vr :e $VIM/_vimrc<CR>
+    noremap <silent> <leader>vr :e ~/_vimrc<CR>
 else
     nnoremap <silent> <leader>vr :e ~/.vimrc<CR>
 endif
@@ -318,41 +382,30 @@ endif
 """"""""""""""""""""""""""""""
 " mark setting
 """"""""""""""""""""""""""""""
-" nmap <silent> <leader>ms <Plug>MarkSet
+" nnoremap <silent> <leader>ms <Plug>MarkSet
 " vmap <silent> <leader>ms <Plug>MarkSet
-" nmap <silent> <leader>mc <Plug>MarkClear
+" nnoremap <silent> <leader>mc <Plug>MarkClear
 " vmap <silent> <leader>mc <Plug>MarkClear
 
-""""""""""""""""""""""""""""""
-" C/C++
-"""""""""""""""""""""""""""""""
-autocmd FileType c,cpp map <buffer> <F5> :make<cr>:cw 10<CR>
+" autocmd FileType c,cpp map <buffer> <F5> :make<cr>:cw 10<CR>
 
 "Quickfix
-nmap <leader>cn :cn<CR>
-nmap <leader>cp :cp<CR>
-nmap <leader>cw :cw 10<CR>
+" nnoremap <leader>cn :cn<CR>
+" nnoremap <leader>cp :cp<CR>
+" nnoremap <leader>cw :cw 10<CR>
 
-nmap <silent><Left> :bp<CR>
-nmap <silent><Right> :bn<CR>
-nmap <silent><C-c> :MBEbw<CR>
-nmap <silent><C-W>c :MBEbw<cr>:wincmd c<cr>
+nnoremap <silent><Left> :bp<CR>
+nnoremap <silent><Right> :bn<CR>
+nnoremap <silent><C-c> :MBEbw<CR>
+nnoremap <silent><C-W>c :MBEbw<cr>:wincmd c<cr>
+nnoremap <silent><leader>bdo :BcloseOthers<cr>
 
-nmap <silent><leader>mi :set foldmethod=indent<CR>
-nmap <silent><leader>ms :set foldmethod=syntax<CR>
-nmap <silent><F6> <ESC>:YcmDiags<CR>
+nnoremap <silent><F6> <ESC>:YcmDiags<CR>
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
-map <silent><leader>bdo :BcloseOthers<cr>
-
-map <leader>= gg=G<C-O><C-O>:w<CR>
+nnoremap <leader>= gg=G<C-O><C-O>:w<CR>
 
 nnoremap <leader>q <ESC>:wqa<CR>
-"
-inoremap <buffer> >> <Space>>><Space>
-inoremap <buffer> << <Space><<<Space>
-inoremap <buffer> <<" <Space><< ""<Space><Left><Left>
-inoremap <buffer> <<; <Space><< "\n";<Left><Left><Left><Left>
 
 " nnoremap <C-[> <Esc>:exec("ptjump ".expand("<cword>"))<Esc>
 
@@ -363,8 +416,6 @@ noremap <silent> <leader>dt :diffthis<CR>
 noremap <silent> <leader>ct :ConqueTermTab bash<CR>
 
 vmap <Enter> <Plug>(EasyAlign)
-cnoremap <C-a>  <Home>
-cnoremap <C-e>  <End>
 
 let g:lt_location_list_toggle_map = '<leader><leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
@@ -372,6 +423,10 @@ let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
 let g:ctrlp_map = '<leader><c-p>'
 let g:ctrlp_use_caching = 1
 let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_cache_dir = g:origPwd."/.forvim"
-map <C-p> :exec("CtrlP ".g:origPwd)<CR>
-map <leader><leader>s :setlocal spell! spelllang=en_US<CR>
+let g:ctrlp_cache_dir = g:origPwd
+let g:ctrlp_user_command = 'find %s -name cscope.files | xargs cat'
+if !filereadable(g:autoSessionFile)
+    let g:loaded_ctrlp = 1
+endif
+nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
+nnoremap <leader><leader>s :setlocal spell! spelllang=en_US<CR>
