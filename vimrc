@@ -36,11 +36,19 @@ color skittles_berry
 " 		colorscheme skittles_berry "re-call your colorscheme
 " 	endif
 " endfunc
-fun! Replace() 
-    let s:word = input("Replace " . expand('<cword>') . " with:") 
-    :exe 'bufdo! %s/\<' . expand('<cword>') . '\>/' . s:word . '/ge' 
-    :unlet! s:word 
+fun! VisualReplace() 
+	let l:saved_reg = @"
+	execute "normal! vgvy"
+	let l:pattern = escape(@", '\\/.*$^~[]')
+	let l:pattern = substitute(l:pattern, "\n$", "", "")
+    let l:word = input("Replace " . l:pattern . " with:") 
+    :exe '%s/\<' . l:pattern . '\>/' . l:word . '/gc' 
 endfun 
+
+fun! Replace() 
+    let l:word = input("Replace " . expand('<cword>') . " with:") 
+    :exe 'bufdo! %s/\<' . expand('<cword>') . '\>/' . l:word . '/gc' 
+endfun
 
 function! VisualSearch(direction) range
 	let l:saved_reg = @"
@@ -118,7 +126,7 @@ set shortmess=aAIsT
 set cmdheight=2
 " set nowrap
 set wrap " When on, lines longer than the width of the window will wrap and displaying continues on the next line.
-let &scrolloff=999 " the cursor line will always be in the middle of the window
+" let &scrolloff=999 " the cursor line will always be in the middle of the window
 set smartcase
 set autoread " read open files again when changed outside Vim
 set autowrite
@@ -218,8 +226,8 @@ set previewheight=10
 " set splitbelow
 
 set clipboard=unnamed	" yank to the system register (*) by default
-" set pastetoggle=<F5>
-nmap <leader>pm :setlocal paste!<BAR>setlocal paste?<CR>
+set pastetoggle=<F2>
+" map <leader>p :setlocal paste!<BAR>setlocal paste?<CR>
 
 " if has("win32")
 "     let g:tagbar_ctags_bin = 'F:\Program\ Files\Vim\vim74\ctags.exe'
@@ -302,10 +310,16 @@ inoremap jj <ESC>
 map j gj
 map k gk
 " Use shift-H and shift-L for move to beginning/end
-nnoremap H 0
-nnoremap L $
-nnoremap <silent>m :cal cursor(line("."), col("$") - (col("$") - col("."))/2)<cr>
+noremap H 0
+noremap L $
+nnoremap <silent>m :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
 nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
+nmap <silent>K <C-u>zz
+nmap <silent>J <C-d>zz
+inoremap <silent><C-j> <Down>
+inoremap <silent><C-k> <Up>
+imap <C-h> <nop>
+inoremap <silent><C-l> <Right>
 
 "Fast remove highlight search
 nnoremap <silent><leader><cr> :noh<cr>
@@ -336,7 +350,7 @@ nnoremap [c [czz
 " gO to create a new line above and below cursor in normal mode
 nnoremap go O<ESC>jo<ESC>k
 
-"I really hate that things don't auto-center
+"When searching for words with * and navigating with N/n, keep line centered vertically
 nnoremap G Gzz
 nnoremap n nzz
 nnoremap N Nzz
@@ -352,8 +366,10 @@ map <C-[> <ESC>:po<CR>
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
 vnoremap <silent> # :call VisualSearch('b')<CR>
+
 "replace the current word in all opened buffers
-vnoremap <leader>R :call Replace()<CR>
+nmap <leader>r :call Replace()<CR>
+vmap <leader>r :call VisualReplace()<CR>
 
 " allow multiple indentation/deindentation in visual mode
 vnoremap < <gv
