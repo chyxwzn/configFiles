@@ -185,6 +185,7 @@ set laststatus=2
 if has("gui_running")
     if has("win32")
         set guifont=Courier\ New:h12
+        set guioptions-=T
     else
         set guifont=Monospace\ 13
         set mouse=a
@@ -206,6 +207,7 @@ set showmatch
 "Restore cursor to file position in previous editing session
 " set viminfo='10,\"100,:20,n~/.viminfo
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+au GUIEnter * simalt ~x " Maximize gvim window
 set sessionoptions-=curdir
 set sessionoptions+=sesdir
 
@@ -359,9 +361,6 @@ nnoremap { {zz
 
 "open tag in new window
 map <leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
-
-" Ctrl-[ jump out of the tag stack (undo Ctrl-])
-map <C-[> <ESC>:po<CR>
 
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
