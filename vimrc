@@ -18,31 +18,13 @@ color skittles_berry
 " color solarized
 
 " ======= functions =======
-" " FocusMode
-" function! ToggleFocusMode()
-" 	if (&foldcolumn != 12)
-" 		set laststatus=0
-" 		set numberwidth=10
-" 		set foldcolumn=12
-" 		set noruler
-" 		hi FoldColumn ctermbg=none
-" 		hi LineNr ctermfg=0 ctermbg=none
-" 		hi NonText ctermfg=0
-" 	else
-" 		set laststatus=2
-" 		set numberwidth=4
-" 		set foldcolumn=0
-" 		set ruler
-" 		colorscheme skittles_berry "re-call your colorscheme
-" 	endif
-" endfunc
 fun! VisualReplace() 
 	let l:saved_reg = @"
 	execute "normal! vgvy"
 	let l:pattern = escape(@", '\\/.*$^~[]')
 	let l:pattern = substitute(l:pattern, "\n$", "", "")
     let l:word = input("Replace " . l:pattern . " with:") 
-    :exe '%s/\<' . l:pattern . '\>/' . l:word . '/gc' 
+    :exe '%s/' . l:pattern . '/' . l:word . '/gc' 
 endfun 
 
 fun! Replace() 
@@ -67,6 +49,24 @@ endfunction
 func! WriteFormat()
 	:%s/\v[^[:print:]]*$//g
 	:%s/\v\s*$//g
+endfunc
+
+func! AgSearchCscopeFiles(mode) range
+    let l:cscopeFile = getcwd() . "/cscope.files"
+    if filereadable(l:cscopeFile)
+        let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:cscopeFile)
+        if a:mode == 'n'
+            let l:pattern = expand('<cword>')
+        else
+            let l:saved_reg = @"
+            execute "normal! vgvy"
+            let l:pattern = escape(@", '\\/.*$^~[]')
+            let l:pattern = substitute(l:pattern, "\n$", "", "")
+        endif
+        silent! execute 'Ag -Q ' . l:pattern . ' ' . l:files
+    else
+        echom "there is no cscope.files"
+    endif
 endfunc
 
 let g:autoSessionFile=".project.vim"
@@ -110,8 +110,8 @@ set nocompatible
 let g:mapleader = ","
 " Switch from block-cursor to vertical-line-cursor when going into/out of
 " insert mode
-let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+let &t_SI="\<Esc>]50;CursorShape=1\x7"
+let &t_EI="\<Esc>]50;CursorShape=0\x7"
 set dict=/usr/share/dict/words
 "set cursorline
 " setlocal spell spelllang=en_us
@@ -121,6 +121,8 @@ set incsearch " While typing a search command, show where the pattern, as it was
 set wildmenu " When 'wildmenu' is on, command-line completion operates in an enhanced mode.
 if !has("win32")
     set term=xterm-256color " colored airline
+    " Set this, so the background color will not change inside tmux (http://snk.tuxfamily.org/log/vim-256color-bce.html)
+    set t_ut=
 endif
 set shortmess=aAIsT
 set cmdheight=2
@@ -228,8 +230,7 @@ set previewheight=10
 " set splitbelow
 
 set clipboard=unnamed	" yank to the system register (*) by default
-set pastetoggle=<F2>
-" map <leader>p :setlocal paste!<BAR>setlocal paste?<CR>
+set pastetoggle=<F6>
 
 " if has("win32")
 "     let g:tagbar_ctags_bin = 'F:\Program\ Files\Vim\vim74\ctags.exe'
@@ -244,64 +245,6 @@ catch
 endtry
 
 
-" airline setting
-let g:airline_left_sep=''
-let g:airline_right_sep=''
-
-" NERDTree setting
-let NERDTreeMinimalUI=1
-let NERDTreeChDirMode=1
-let NERDTreeWinPos = "left"
-if has("win32")
-    let NERDTreeDirArrows = 0
-else
-    let NERDTreeDirArrows=1
-endif
-
-let g:EasyMotion_leader_key = '<Leader>'
-
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_auto_start_csharp_server = 0
-let g:ycm_key_invoke_completion = '<C-/>'
-" let g:curWorkingDir=getcwd()
-let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_always_populate_location_list = 1
-if !filereadable(g:ycm_global_ycm_extra_conf)
-    let g:loaded_youcompleteme=1
-endif
-
-let g:loaded_syntastic_plugin = 1
-let g:syntastic_auto_jump = 2
-let g:syntastic_c_checkers = ['make']
-let g:syntastic_cpp_checkers = ['gcc']
-let g:syntastic_check_on_open = 1
-
-" auto save and load session
-if filereadable(g:autoSessionFile)
-	if argc() == 0
-		au VimEnter * call EnterHandler()
-		au VimLeave * call LeaveHandler()
-	endif
-endif
-
-autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
-au BufRead,BufNewFile *.js set ft=javascript syntax=jquery
-
-let g:did_UltiSnips_plugin=1
-let g:UltiSnipsExpandTrigger="<C-f>"
-let g:UltiSnipsJumpForwardTrigger="<C-f>"
-let g:UltiSnipsJumpBackwardTrigger="<C-b>"
-let g:UltiSnipsSnippetDirectories=["mySnippets"]
-
-let g:tagbar_show_linenumbers = 1
-" let g:tagbar_autopreview = 1
-
-" let g:indentLine_color_gui = '#A4E57E'
-" let g:indentLine_color_term = 239
-let g:indentLine_loaded=1
-
 " make type colon easily 
 nnoremap ; :
 vnoremap ; :
@@ -309,19 +252,22 @@ vnoremap ; :
 " home row (either use 'jj' or 'jk')
 inoremap jj <ESC>
 " Treat long lines as break lines (useful when moving around in them)
-map j gj
-map k gk
+nnoremap j gj
+nnoremap k gk
 " Use shift-H and shift-L for move to beginning/end
 noremap H 0
 noremap L $
+noremap Y y$
+noremap gp o<Esc>p " paster below current line
 nnoremap <silent>m :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
 nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
-nmap <silent>K <C-u>zz
-nmap <silent>J <C-d>zz
-inoremap <silent><C-j> <Down>
-inoremap <silent><C-k> <Up>
-imap <C-h> <nop>
-inoremap <silent><C-l> <Right>
+map <silent>K <C-u>zz
+map <silent>J <C-d>zz
+" <C-h> to backspace(default) and <C-l> to delete
+inoremap <silent><C-l> <Delete>
+" inoremap <silent><C-j> <Down>
+" inoremap <silent><C-k> <Up>
+" inoremap <silent><C-l> <Right>
 
 "Fast remove highlight search
 nnoremap <silent><leader><cr> :noh<cr>
@@ -331,7 +277,7 @@ nno <C-Down> ddp
 nno <C-Up> ddkP
 
 " Reselect text that was just pasted with ,v
-nnoremap <leader>v V`]
+nnoremap <silent><leader>v V`]
 
 " fast save
 nnoremap <silent><leader>s :w!<CR>
@@ -340,7 +286,7 @@ nnoremap <silent><leader>W :call WriteFormat()<cr>:w!<cr>
 " nno <Leader>h :tabprevious<CR>
 " nno <Leader>l :tabnext<CR>
 " nnoremap <Leader>tn :tabnew %:p<CR>
-" nnoremap <leader>tc :tabclose<CR>
+" nnoremap <silent><leader>tc :tabclose<CR>
 
 " diff
 nnoremap ]c ]czz
@@ -360,15 +306,15 @@ nnoremap } }zz
 nnoremap { {zz
 
 "open tag in new window
-map <leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
+map <silent><leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
 
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
 vnoremap <silent> # :call VisualSearch('b')<CR>
 
 "replace the current word in all opened buffers
-nmap <leader>r :call Replace()<CR>
-vmap <leader>r :call VisualReplace()<CR>
+nmap <silent><leader>r :call Replace()<CR>
+vmap <silent><leader>r :call VisualReplace()<CR>
 
 " allow multiple indentation/deindentation in visual mode
 vnoremap < <gv
@@ -380,61 +326,100 @@ nnoremap <C-J> <C-W>j
 nnoremap <C-K> <C-W>k
 nnoremap <C-H> <C-W>h
 nnoremap <C-L> <C-W>l
+nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
+nnoremap <silent><leader>q <ESC>:wqa<CR>
+" nnoremap <C-[> <Esc>:exec("ptjump ".expand("<cword>"))<Esc>
+noremap <silent><leader>dt :diffthis<CR>
 
-nnoremap <silent> <leader>tb :TagbarToggle<CR>
-nnoremap <silent> <Leader>mt :MBEToggle<cr>
+nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_US<CR>
 
-" NERDTree setting
-nnoremap <silent> <leader>nt :NERDTreeToggle<cr>
-nnoremap <silent> <leader>nf :NERDTreeFind<CR>
-
-if has("win32")
-    noremap <silent> <leader>vr :e ~/_vimrc<CR>
-else
-    nnoremap <silent> <leader>vr :e ~/.vimrc<CR>
+" auto save and load session
+if filereadable(g:autoSessionFile)
+	if argc() == 0
+		au VimEnter * call EnterHandler()
+		au VimLeave * call LeaveHandler()
+	endif
 endif
 
-""""""""""""""""""""""""""""""
-" mark setting
-""""""""""""""""""""""""""""""
-" nnoremap <silent> <leader>ms <Plug>MarkSet
-" vmap <silent> <leader>ms <Plug>MarkSet
-" nnoremap <silent> <leader>mc <Plug>MarkClear
-" vmap <silent> <leader>mc <Plug>MarkClear
-
-" autocmd FileType c,cpp map <buffer> <F5> :make<cr>:cw 10<CR>
+if has("win32")
+    noremap <silent><leader>vr :e ~/_vimrc<CR>
+else
+    nnoremap <silent><leader>vr :e ~/.vimrc<CR>
+endif
 
 "Quickfix
-" nnoremap <leader>cn :cn<CR>
-" nnoremap <leader>cp :cp<CR>
-" nnoremap <leader>cw :cw 10<CR>
+" nnoremap <silent><leader>cn :cn<CR>
+" nnoremap <silent><leader>cp :cp<CR>
+" nnoremap <silent><leader>cw :cw 10<CR>
+let g:lt_location_list_toggle_map = '<leader><leader>l'
+let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
 
+autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
+au BufRead,BufNewFile *.js set ft=javascript syntax=jquery
+" autocmd FileType c,cpp map <buffer> <F5> :make<cr>:cw 10<CR>
+
+
+
+" ==================plugins settings==============
+
+" airline setting
+let g:airline_left_sep=''
+let g:airline_right_sep=''
+
+" NERDTree setting
+let NERDTreeMinimalUI=1
+let NERDTreeChDirMode=1
+let NERDTreeWinPos = "left"
+let NERDTreeDirArrows = 0
+nnoremap <silent><F5> :NERDTreeToggle<cr>
+nnoremap <silent><leader>nf :NERDTreeFind<CR>
+
+" EasyMotion setting
+let g:EasyMotion_leader_key = '<leader>'
+
+" youcompleteme setting
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_auto_start_csharp_server = 0
+let g:ycm_key_invoke_completion = '<C-/>'
+" let g:curWorkingDir=getcwd()
+let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_always_populate_location_list = 1
+if !filereadable(g:ycm_global_ycm_extra_conf)
+    let g:loaded_youcompleteme=1
+endif
+" nnoremap <silent><F7> <ESC>:YcmDiags<CR>
+" nnoremap <silent><leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" UltiSnips setting
+let g:did_UltiSnips_plugin=1
+let g:UltiSnipsExpandTrigger="<C-f>"
+let g:UltiSnipsJumpForwardTrigger="<C-f>"
+let g:UltiSnipsJumpBackwardTrigger="<C-b>"
+let g:UltiSnipsSnippetDirectories=["mySnippets"]
+
+" tagbar setting
+let g:tagbar_show_linenumbers = 1
+" let g:tagbar_autopreview = 1
+nnoremap <silent><F2> :TagbarToggle<CR>
+
+" minibuffer setting
+let g:miniBufExplVSplit = 14   " column width in chars
+" Put new window above current or on the left for vertical split
+let g:miniBufExplBRSplit = 0   
+let g:miniBufExplorerAutoStart = 0
+nnoremap <silent><F3> :MBEToggle<cr>
 nnoremap <silent><Left> :bp<CR>
 nnoremap <silent><Right> :bn<CR>
 nnoremap <silent><C-c> :MBEbw<CR>
 nnoremap <silent><C-W>c :MBEbw<cr>:wincmd c<cr>
 nnoremap <silent><leader>bdo :BcloseOthers<cr>
 
-nnoremap <silent><F6> <ESC>:YcmDiags<CR>
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-nnoremap <leader>= gg=G<C-O><C-O>:w<CR>
-
-nnoremap <leader>q <ESC>:wqa<CR>
-
-" nnoremap <C-[> <Esc>:exec("ptjump ".expand("<cword>"))<Esc>
-
-nnoremap <silent> <leader>il :IndentLinesToggle<CR>
-
-noremap <silent> <leader>dt :diffthis<CR>
-
-noremap <silent> <leader>ct :ConqueTermTab bash<CR>
-
+" EasyAlign setting
 vmap <Enter> <Plug>(EasyAlign)
 
-let g:lt_location_list_toggle_map = '<leader><leader>l'
-let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
-
+" ctrlp setting
 let g:ctrlp_map = '<leader><c-p>'
 let g:ctrlp_use_caching = 1
 let g:ctrlp_clear_cache_on_exit = 0
@@ -444,4 +429,9 @@ if !filereadable(g:autoSessionFile)
     let g:loaded_ctrlp = 1
 endif
 nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
-nnoremap <leader><leader>s :setlocal spell! spelllang=en_US<CR>
+
+" ag (the silver searcher) setting
+let g:ag_highlight=1
+let g:ag_qhandler="copen 14"
+nmap <silent><leader>* :call AgSearchCscopeFiles('n')<CR>
+vmap <silent><leader>* :call AgSearchCscopeFiles('v')<CR>
