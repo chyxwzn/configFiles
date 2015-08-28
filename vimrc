@@ -272,11 +272,11 @@ nnoremap <silent>m :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
 nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
 map <silent>K <C-u>zz
 map <silent>J <C-d>zz
-" <C-h> to backspace(default) and <C-l> to delete
-inoremap <silent><C-l> <Delete>
-" inoremap <silent><C-j> <Down>
-" inoremap <silent><C-k> <Up>
-" inoremap <silent><C-l> <Right>
+
+inoremap <silent><C-j> <Down>
+inoremap <silent><C-k> <Up>
+inoremap <silent><C-h> <Left>
+inoremap <silent><C-l> <Right>
 
 "Fast remove highlight search
 nnoremap <silent><leader><cr> :noh<cr>
@@ -356,12 +356,11 @@ else
     nnoremap <silent><leader>vr :e ~/.vimrc<CR>
 endif
 
-"Quickfix
-" nnoremap <silent><leader>cn :cn<CR>
-" nnoremap <silent><leader>cp :cp<CR>
-" nnoremap <silent><leader>cw :cw 10<CR>
-let g:lt_location_list_toggle_map = '<leader><leader>l'
-let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
+"Quickfix and Locationlist
+nnoremap <silent><F8> :lne<CR>
+nnoremap <silent><F7> :lp<CR>
+" let g:lt_location_list_toggle_map = '<leader><leader>l'
+" let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
 
 autocmd Filetype java setlocal omnifunc=javacomplete#Complete
 autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
@@ -389,6 +388,7 @@ let g:EasyMotion_leader_key = '<leader>'
 
 " youcompleteme setting
 let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_show_diagnostics_ui = 0
 let g:ycm_auto_start_csharp_server = 0
 let g:ycm_key_invoke_completion = '<C-/>'
 " let g:curWorkingDir=getcwd()
@@ -431,9 +431,10 @@ vmap <Enter> <Plug>(EasyAlign)
 " ctrlp setting
 let g:ctrlp_map = '<leader><c-p>'
 let g:ctrlp_use_caching = 1
+let g:ctrlp_by_filename = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_cache_dir = g:origPwd
-let g:ctrlp_user_command = 'find %s -name cscope.files | xargs cat'
+let g:ctrlp_user_command = 'ag --nocolor --depth 0 -g cscope.files %s | xargs cat'
 if !filereadable(g:autoSessionFile)
     let g:loaded_ctrlp = 1
 endif
