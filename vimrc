@@ -51,22 +51,31 @@ func! WriteFormat()
 	:%s/\v\s*$//g
 endfunc
 
-func! AgSearchCscopeFiles(mode) range
+func! AgSearch(mode, scope)
     let l:cscopeFile = getcwd() . "/cscope.files"
     if filereadable(l:cscopeFile)
-        let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:cscopeFile)
-        if a:mode == 'n'
-            let l:pattern = expand('<cword>')
+        if a:scope == 'cscope'
+            let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:cscopeFile)
         else
-            let l:saved_reg = @"
-            execute "normal! vgvy"
-            let l:pattern = escape(@", '\\/.*$^~[]')
-            let l:pattern = substitute(l:pattern, "\n$", "", "")
+            let l:files = bufname("%")
         endif
-        silent! execute 'Ag -Q ' . l:pattern . ' ' . l:files
     else
-        echom "there is no cscope.files"
+        if a:scope == 'cscope'
+            echom "there is no cscope.files"
+            return 1
+        else
+            let l:files = bufname("%")
+        endif
     endif
+    if a:mode == 'n'
+        let l:pattern = expand('<cword>')
+    else
+        let l:saved_reg = @"
+        execute "normal! vgvy"
+        let l:pattern = escape(@", '\\/.*$^~[]')
+        let l:pattern = substitute(l:pattern, "\n$", "", "")
+    endif
+    silent! execute 'Ag -Q ' . l:pattern . ' ' . l:files
 endfunc
 
 let g:autoSessionFile=".project.vim"
@@ -433,5 +442,7 @@ nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
 " ag (the silver searcher) setting
 let g:ag_highlight=1
 let g:ag_qhandler="copen 14"
-nmap <silent><leader>* :call AgSearchCscopeFiles('n')<CR>
-vmap <silent><leader>* :call AgSearchCscopeFiles('v')<CR>
+nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
+vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
+nmap <silent><leader># :call AgSearch('n', 'current')<CR>
+vmap <silent><leader># :call AgSearch('v', 'current')<CR>
