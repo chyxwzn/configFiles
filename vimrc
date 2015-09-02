@@ -75,7 +75,7 @@ func! AgSearch(mode, scope)
         let l:pattern = escape(@", '\\/.*$^~[]')
         let l:pattern = substitute(l:pattern, "\n$", "", "")
     endif
-    silent! execute 'Ag -Q ' . l:pattern . ' ' . l:files
+    silent! execute 'LAg -Q ' . l:pattern . ' ' . l:files
 endfunc
 
 let g:autoSessionFile=".project.vim"
@@ -112,7 +112,6 @@ function! <SID>BufCloseOthers()
 	endfor  
 endfunction
 
-
 "============== General Settings ===============
 "Get out of VI's compatible mode..
 set nocompatible
@@ -121,7 +120,7 @@ let g:mapleader = ","
 " insert mode
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
-set dict=/usr/share/dict/words
+" set dict=/usr/share/dict/words
 "set cursorline
 " setlocal spell spelllang=en_us
 set showcmd " Show (partial) command in the last line of the screen.
@@ -397,16 +396,40 @@ let g:ycm_confirm_extra_conf = 0
 let g:ycm_always_populate_location_list = 1
 if !filereadable(g:ycm_global_ycm_extra_conf)
     let g:loaded_youcompleteme=1
+    " neocomplete Settings
+    let g:neocomplete#enable_at_startup = 1
+    let g:neocomplete#enable_ignore_case = 1
+    let g:neocomplete#data_directory = "~/.cache/neocomplete"
+    inoremap <expr><C-g>     neocomplete#undo_completion()
+    " Close popup by <Space>.
+    " inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
+    " highlight Pmenu ctermbg=8 guibg=#606060
+    " highlight PmenuSel ctermbg=1 guifg=#dddd00 guibg=#1f82cd
+    " highlight PmenuSbar ctermbg=0 guibg=#d6d6d6
+    " For smart TAB completion.
+    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ neocomplete#start_manual_complete()
+                function! s:check_back_space() "{{{
+                    let col = col('.') - 1
+                    return !col || getline('.')[col - 1]  =~ '\s'
+                endfunction"}}}
+    inoremap <expr><S-Tab>  pumvisible() ? "\<C-p>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ neocomplete#start_manual_complete()
+                function! s:check_back_space() "{{{
+                    let col = col('.') - 1
+                    return !col || getline('.')[col - 1]  =~ '\s'
+                endfunction"}}}
 endif
 " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
 " nnoremap <silent><leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " UltiSnips setting
-let g:did_UltiSnips_plugin=1
 let g:UltiSnipsExpandTrigger="<C-f>"
 let g:UltiSnipsJumpForwardTrigger="<C-f>"
 let g:UltiSnipsJumpBackwardTrigger="<C-b>"
-let g:UltiSnipsSnippetDirectories=["mySnippets"]
+let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 
 " tagbar setting
 let g:tagbar_show_linenumbers = 1
@@ -429,16 +452,19 @@ nnoremap <silent><leader>bdo :BcloseOthers<cr>
 vmap <Enter> <Plug>(EasyAlign)
 
 " ctrlp setting
-let g:ctrlp_map = '<leader><c-p>'
-let g:ctrlp_use_caching = 1
-let g:ctrlp_by_filename = 1
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_cache_dir = g:origPwd
-let g:ctrlp_user_command = 'ag --nocolor --depth 0 -g cscope.files %s | xargs cat'
-if !filereadable(g:autoSessionFile)
-    let g:loaded_ctrlp = 1
+if filereadable(g:autoSessionFile)
+    let g:ctrlp_map = '<leader><c-p>'
+    let g:ctrlp_use_caching = 1
+    let g:ctrlp_by_filename = 1
+    let g:ctrlp_clear_cache_on_exit = 0
+    let g:ctrlp_cache_dir = g:origPwd
+    nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
+    let g:ctrlp_user_command = 'ag --nocolor --depth 0 -g cscope.files %s | xargs cat'
+else
+    let g:ctrlp_use_caching = 0
+    let g:ctrlp_by_filename = 1
+    let g:ctrlp_user_command = 'ag -l --nocolor --depth 0 -g "" %s'
 endif
-nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
 
 " ag (the silver searcher) setting
 let g:ag_highlight=1
@@ -447,3 +473,4 @@ nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
 vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
 nmap <silent><leader># :call AgSearch('n', 'current')<CR>
 vmap <silent><leader># :call AgSearch('v', 'current')<CR>
+
