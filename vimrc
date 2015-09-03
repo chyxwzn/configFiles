@@ -19,10 +19,10 @@ color skittles_berry
 
 " ======= functions =======
 fun! VisualReplace() 
-	let l:saved_reg = @"
-	execute "normal! vgvy"
-	let l:pattern = escape(@", '\\/.*$^~[]')
-	let l:pattern = substitute(l:pattern, "\n$", "", "")
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
     let l:word = input("Replace " . l:pattern . " with:") 
     :exe '%s/' . l:pattern . '/' . l:word . '/gc' 
 endfun 
@@ -33,22 +33,22 @@ fun! Replace()
 endfun
 
 function! VisualSearch(direction) range
-	let l:saved_reg = @"
-	execute "normal! vgvy"
-	let l:pattern = escape(@", '\\/.*$^~[]')
-	let l:pattern = substitute(l:pattern, "\n$", "", "")
-	if a:direction == 'b'
-		execute "normal ?" . l:pattern . "^M"
-	else
-		execute "normal /" . l:pattern . "^M"
-	endif
-	let @/ = l:pattern
-	let @" = l:saved_reg
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    else
+        execute "normal /" . l:pattern . "^M"
+    endif
+    let @/ = l:pattern
+    let @" = l:saved_reg
 endfunction
 
 func! WriteFormat()
-	:%s/\v[^[:print:]]*$//g
-	:%s/\v\s*$//g
+    :%s/\v[^[:print:]]*$//g
+    :%s/\v\s*$//g
 endfunc
 
 func! AgSearch(mode, scope)
@@ -82,34 +82,34 @@ let g:autoSessionFile=".project.vim"
 let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
 func! EnterHandler()
-	if filereadable(g:autoSessionFile)
+    if filereadable(g:autoSessionFile)
         exe "source ".g:autoSessionFile
-	endif
-	if filereadable(g:viminfoFile)
-		exe "rviminfo ".g:viminfoFile
-	endif
-	if filereadable("tags")
-		set tags+=tags
-	endif
+    endif
+    if filereadable(g:viminfoFile)
+        exe "rviminfo ".g:viminfoFile
+    endif
+    if filereadable("tags")
+        set tags+=tags
+    endif
 endfunction
 
 func! LeaveHandler()
-	exec "NERDTreeClose"
-	exec "mksession! ".g:origPwd."/".g:autoSessionFile
-	exec "wviminfo ".g:origPwd."/".g:viminfoFile
+    exec "NERDTreeClose"
+    exec "mksession! ".g:origPwd."/".g:autoSessionFile
+    exec "wviminfo ".g:origPwd."/".g:viminfoFile
 endfunction
 
 command! BcloseOthers call <SID>BufCloseOthers()  
 function! <SID>BufCloseOthers()  
-	let l:currentBufNum   = bufnr("%")  
-	let l:alternateBufNum = bufnr("#")  
-	for i in range(1,bufnr("$"))  
-		if buflisted(i)  
-			if i!=l:currentBufNum  
-				execute("MBEbw ".i)  
-			endif  
-		endif  
-	endfor  
+    let l:currentBufNum   = bufnr("%")  
+    let l:alternateBufNum = bufnr("#")  
+    for i in range(1,bufnr("$"))  
+        if buflisted(i)  
+            if i!=l:currentBufNum  
+                execute("MBEbw ".i)  
+            endif  
+        endif  
+    endfor  
 endfunction
 
 "============== General Settings ===============
@@ -142,9 +142,9 @@ set autoread " read open files again when changed outside Vim
 set autowrite
 
 set hidden " hide buffers instead of closing them this
-           " means that the current buffer can be put
-           " to background without being written; and
-           " that marks and undo history are preserved
+" means that the current buffer can be put
+" to background without being written; and
+" that marks and undo history are preserved
 set completeopt=menu
 set mousemodel=popup " Sets the model to use for the mouse.
 set backspace=indent,eol,start  " backspacing over everything in insert mode
@@ -156,21 +156,21 @@ set enc=utf-8
 " Chinese
 " multi-encoding setting
 if has("multi_byte")
-  "set bomb 
-  set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,sjis,euc-kr,ucs-2le,latin1 
-  " CJK environment detection and corresponding setting 
-  if v:lang =~ "^zh_CN" 
-    " Use cp936 to support GBK, euc-cn == gb2312 
-    set encoding=chinese 
-    set termencoding=chinese 
-    set fileencoding=chinese 
-  endif 
-  " Detect UTF-8 locale, and replace CJK setting if needed 
-  if v:lang =~ "utf8$" || v:lang =~ "UTF-8$" 
-    set encoding=utf-8 
-    set termencoding=utf-8 
-    set fileencoding=utf-8 
-  endif 
+    "set bomb 
+    set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,sjis,euc-kr,ucs-2le,latin1 
+    " CJK environment detection and corresponding setting 
+    if v:lang =~ "^zh_CN" 
+        " Use cp936 to support GBK, euc-cn == gb2312 
+        set encoding=chinese 
+        set termencoding=chinese 
+        set fileencoding=chinese 
+    endif 
+    " Detect UTF-8 locale, and replace CJK setting if needed 
+    if v:lang =~ "utf8$" || v:lang =~ "UTF-8$" 
+        set encoding=utf-8 
+        set termencoding=utf-8 
+        set fileencoding=utf-8 
+    endif 
 endif 
 " set fileformat=unix
 set fileformats=unix,dos
@@ -272,6 +272,19 @@ nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
 map <silent>K <C-u>zz
 map <silent>J <C-d>zz
 
+" CTRL-A is Select all
+nnoremap <C-A> gggH<C-O>G
+inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
+cnoremap <C-A> <C-C>gggH<C-O>G
+onoremap <C-A> <C-C>gggH<C-O>G
+snoremap <C-A> <C-C>gggH<C-O>G
+xnoremap <C-A> <C-C>ggVG
+
+" Use CTRL-S for saving, also in Insert mode
+noremap  <C-S> :update<CR>
+vnoremap <C-S> <C-C>:update<CR>
+inoremap <C-S> <C-O>:update<CR>
+
 inoremap <silent><C-j> <Down>
 inoremap <silent><C-k> <Up>
 inoremap <silent><C-h> <Left>
@@ -287,9 +300,7 @@ nno <C-Up> ddkP
 " Reselect text that was just pasted with ,v
 nnoremap <silent><leader>v V`]
 
-" fast save
-nnoremap <silent><leader>s :w!<CR>
-nnoremap <silent><leader>W :call WriteFormat()<cr>:w!<cr>
+nnoremap <silent><leader>wf :call WriteFormat()<cr>:w!<cr>
 
 " nno <Leader>h :tabprevious<CR>
 " nno <Leader>l :tabnext<CR>
@@ -343,10 +354,10 @@ nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_US<CR>
 
 " auto save and load session
 if filereadable(g:autoSessionFile)
-	if argc() == 0
-		au VimEnter * call EnterHandler()
-		au VimLeave * call LeaveHandler()
-	endif
+    if argc() == 0
+        au VimEnter * call EnterHandler()
+        au VimLeave * call LeaveHandler()
+    endif
 endif
 
 if has("win32")
@@ -386,15 +397,15 @@ nnoremap <silent><leader>nf :NERDTreeFind<CR>
 let g:EasyMotion_leader_key = '<leader>'
 
 " youcompleteme setting
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_auto_start_csharp_server = 0
-let g:ycm_key_invoke_completion = '<C-/>'
-" let g:curWorkingDir=getcwd()
 let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_always_populate_location_list = 1
-if !filereadable(g:ycm_global_ycm_extra_conf)
+if filereadable(g:ycm_global_ycm_extra_conf)
+    let g:ycm_collect_identifiers_from_tags_files = 1
+    let g:ycm_show_diagnostics_ui = 0
+    let g:ycm_auto_start_csharp_server = 0
+    let g:ycm_key_invoke_completion = '<C-/>'
+    let g:ycm_confirm_extra_conf = 0
+    let g:ycm_always_populate_location_list = 1
+else
     let g:loaded_youcompleteme=1
     " neocomplete Settings
     let g:neocomplete#enable_at_startup = 1
@@ -410,17 +421,17 @@ if !filereadable(g:ycm_global_ycm_extra_conf)
     inoremap <expr><TAB>  pumvisible() ? "\<C-n>" :
                 \ <SID>check_back_space() ? "\<TAB>" :
                 \ neocomplete#start_manual_complete()
-                function! s:check_back_space() "{{{
-                    let col = col('.') - 1
-                    return !col || getline('.')[col - 1]  =~ '\s'
-                endfunction"}}}
+    function! s:check_back_space() "{{{
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1]  =~ '\s'
+    endfunction"}}}
     inoremap <expr><S-Tab>  pumvisible() ? "\<C-p>" :
                 \ <SID>check_back_space() ? "\<TAB>" :
                 \ neocomplete#start_manual_complete()
-                function! s:check_back_space() "{{{
-                    let col = col('.') - 1
-                    return !col || getline('.')[col - 1]  =~ '\s'
-                endfunction"}}}
+    function! s:check_back_space() "{{{
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1]  =~ '\s'
+    endfunction"}}}
 endif
 " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
 " nnoremap <silent><leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
