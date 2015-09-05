@@ -81,15 +81,15 @@ endfunc
 let g:autoSessionFile=".project.vim"
 let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
+if filereadable("tags")
+    set tags+=tags
+endif
 func! EnterHandler()
     if filereadable(g:autoSessionFile)
         exe "source ".g:autoSessionFile
     endif
     if filereadable(g:viminfoFile)
         exe "rviminfo ".g:viminfoFile
-    endif
-    if filereadable("tags")
-        set tags+=tags
     endif
 endfunction
 
@@ -120,7 +120,7 @@ let g:mapleader = ","
 " insert mode
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
-" set dict=/usr/share/dict/words
+set thesaurus=words
 "set cursorline
 " setlocal spell spelllang=en_us
 set showcmd " Show (partial) command in the last line of the screen.
@@ -136,7 +136,6 @@ set shortmess=aAIsT
 set cmdheight=2
 " set nowrap
 set wrap " When on, lines longer than the width of the window will wrap and displaying continues on the next line.
-" let &scrolloff=999 " the cursor line will always be in the middle of the window
 set smartcase
 set autoread " read open files again when changed outside Vim
 set autowrite
@@ -150,31 +149,17 @@ set mousemodel=popup " Sets the model to use for the mouse.
 set backspace=indent,eol,start  " backspacing over everything in insert mode
 set wildignore+=*.bak,*.bk,*/.git/*,*/.svn/*,*.o,*.e,*~,*.pyc,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
 set number
+set relativenumber
 set cinoptions+=g0 " Place C++ scope declarations 0 characters from the indent of the block they are in.
 
-set enc=utf-8
-" Chinese
+set encoding=utf-8 
+set termencoding=utf-8 
+set fileencoding=utf-8 
 " multi-encoding setting
 if has("multi_byte")
-    "set bomb 
-    set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,sjis,euc-kr,ucs-2le,latin1 
-    " CJK environment detection and corresponding setting 
-    if v:lang =~ "^zh_CN" 
-        " Use cp936 to support GBK, euc-cn == gb2312 
-        set encoding=chinese 
-        set termencoding=chinese 
-        set fileencoding=chinese 
-    endif 
-    " Detect UTF-8 locale, and replace CJK setting if needed 
-    if v:lang =~ "utf8$" || v:lang =~ "UTF-8$" 
-        set encoding=utf-8 
-        set termencoding=utf-8 
-        set fileencoding=utf-8 
-    endif 
+    set fileencodings=utf-8,ucs-bom,cp936,gb18030,big5,euc-jp,sjis,euc-kr,ucs-2le,latin1 
 endif 
-" set fileformat=unix
 set fileformats=unix,dos
-" set fillchars=vert:|
 
 let $LANG='en'
 set langmenu=en
@@ -240,10 +225,6 @@ set previewheight=10
 set clipboard=unnamed	" yank to the system register (*) by default
 set pastetoggle=<F6>
 
-" if has("win32")
-"     let g:tagbar_ctags_bin = 'F:\Program\ Files\Vim\vim74\ctags.exe'
-" endif
-
 " => Turn persistent undo on 
 "    means that you can undo even when you close a buffer/VIM
 try
@@ -285,10 +266,13 @@ noremap  <C-S> :update<CR>
 vnoremap <C-S> <C-C>:update<CR>
 inoremap <C-S> <C-O>:update<CR>
 
+" inoremap <silent><expr><C-j> pumvisible() ? "":"\<Down>"
+" inoremap <silent><expr><C-k> pumvisible() ? "\<C-x>\<C-k>":"\<Up>"
 inoremap <silent><C-j> <Down>
 inoremap <silent><C-k> <Up>
 inoremap <silent><C-h> <Left>
 inoremap <silent><C-l> <Right>
+inoremap <silent><C-t> <C-e><C-x><C-t>
 
 "Fast remove highlight search
 nnoremap <silent><leader><cr> :noh<cr>
@@ -405,6 +389,8 @@ if filereadable(g:ycm_global_ycm_extra_conf)
     let g:ycm_key_invoke_completion = '<C-/>'
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_always_populate_location_list = 1
+    " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
+    " nnoremap <silent><leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 else
     let g:loaded_youcompleteme=1
     " neocomplete Settings
@@ -412,29 +398,8 @@ else
     let g:neocomplete#enable_ignore_case = 1
     let g:neocomplete#data_directory = "~/.cache/neocomplete"
     inoremap <expr><C-g>     neocomplete#undo_completion()
-    " Close popup by <Space>.
-    " inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
-    " highlight Pmenu ctermbg=8 guibg=#606060
-    " highlight PmenuSel ctermbg=1 guifg=#dddd00 guibg=#1f82cd
-    " highlight PmenuSbar ctermbg=0 guibg=#d6d6d6
-    " For smart TAB completion.
-    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ neocomplete#start_manual_complete()
-    function! s:check_back_space() "{{{
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~ '\s'
-    endfunction"}}}
-    inoremap <expr><S-Tab>  pumvisible() ? "\<C-p>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ neocomplete#start_manual_complete()
-    function! s:check_back_space() "{{{
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~ '\s'
-    endfunction"}}}
+    inoremap <expr><C-e>     neocomplete#cancel_popup()
 endif
-" nnoremap <silent><F7> <ESC>:YcmDiags<CR>
-" nnoremap <silent><leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " UltiSnips setting
 let g:UltiSnipsExpandTrigger="<C-f>"
@@ -443,8 +408,9 @@ let g:UltiSnipsJumpBackwardTrigger="<C-b>"
 let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 
 " tagbar setting
-let g:tagbar_show_linenumbers = 1
-" let g:tagbar_autopreview = 1
+" let g:tagbar_show_linenumbers = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_foldlevel = 1
 nnoremap <silent><F2> :TagbarToggle<CR>
 
 " minibuffer setting
@@ -470,7 +436,11 @@ if filereadable(g:autoSessionFile)
     let g:ctrlp_clear_cache_on_exit = 0
     let g:ctrlp_cache_dir = g:origPwd
     nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
-    let g:ctrlp_user_command = 'ag --nocolor --depth 0 -g cscope.files %s | xargs cat'
+    if has("win32")
+        let g:ctrlp_user_command = 'type %s\cscope.files'
+    else
+        let g:ctrlp_user_command = 'cat %s/cscope.files'
+    endif
 else
     let g:ctrlp_use_caching = 0
     let g:ctrlp_by_filename = 1
@@ -478,7 +448,6 @@ else
 endif
 
 " ag (the silver searcher) setting
-let g:ag_highlight=1
 let g:ag_qhandler="copen 14"
 nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
 vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
