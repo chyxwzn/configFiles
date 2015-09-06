@@ -397,7 +397,6 @@ else
     let g:neocomplete#enable_at_startup = 1
     let g:neocomplete#enable_ignore_case = 1
     let g:neocomplete#data_directory = "~/.cache/neocomplete"
-    inoremap <expr><C-g>     neocomplete#undo_completion()
     inoremap <expr><C-e>     neocomplete#cancel_popup()
 endif
 
