@@ -1,14 +1,13 @@
 #!/bin/bash
 
 if [[ $# -eq 1 ]] && ! [[ -d $1 ]] && [[ $1 -eq 0 ]]; then
-    echo clear all
     rm -f cscope.files > /dev/null 2>&1
     rm -f cscope.in.out > /dev/null 2>&1
     rm -f cscope.out > /dev/null 2>&1
     rm -f cscope.po.out > /dev/null 2>&1
     rm -f tags > /dev/null 2>&1
     rm -f .project.vim > /dev/null 2>&1
-    rm -f %*.txt > /dev/null 2>&1
+    rm -f *%%*.txt > /dev/null 2>&1
     exit 0
 fi
 
