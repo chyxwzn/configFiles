@@ -7,7 +7,7 @@ if [[ $# -eq 1 ]] && ! [[ -d $1 ]] && [[ $1 -eq 0 ]]; then
     rm -f cscope.po.out > /dev/null 2>&1
     rm -f tags > /dev/null 2>&1
     rm -f .project.vim > /dev/null 2>&1
-    rm -f *%%*.txt > /dev/null 2>&1
+    rm -f *%*.txt > /dev/null 2>&1
     exit 0
 fi
 

@@ -286,14 +286,10 @@ nnoremap <silent><leader>v V`]
 
 nnoremap <silent><leader>wf :call WriteFormat()<cr>:w!<cr>
 
-" nno <Leader>h :tabprevious<CR>
-" nno <Leader>l :tabnext<CR>
-" nnoremap <Leader>tn :tabnew %:p<CR>
-" nnoremap <silent><leader>tc :tabclose<CR>
-
-" diff
-nnoremap ]c ]czz
-nnoremap [c [czz
+nno <Leader>h :tabprevious<CR>
+nno <Leader>l :tabnext<CR>
+nnoremap <Leader>tn :tabnew %:p<CR>
+nnoremap <silent><leader>tc :tabclose<CR>
 
 " default to very magic
 "no / /\v
@@ -323,7 +319,6 @@ vmap <silent><leader>r :call VisualReplace()<CR>
 vnoremap < <gv
 vnoremap > >gv
 
-"noremap <F1> :call ToggleFocusMode()<cr>
 "Smart way to move btw. windows
 nnoremap <C-J> <C-W>j
 nnoremap <C-K> <C-W>k
@@ -368,9 +363,20 @@ au BufRead,BufNewFile *.js set ft=javascript syntax=jquery
 " airline setting
 let g:airline_left_sep=''
 let g:airline_right_sep=''
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#hunks#enabled = 1
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#tab_min_count = 2
+let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tabline#tab_nr_type = 1 " tab number
+let g:airline#extensions#tabline#show_tab_nr = 0
 
 " NERDTree setting
 let NERDTreeMinimalUI=1
+let NERDTreeShowLineNumbers=1
 let NERDTreeChDirMode=1
 let NERDTreeWinPos = "left"
 let NERDTreeDirArrows = 0
@@ -413,7 +419,7 @@ let g:tagbar_foldlevel = 1
 nnoremap <silent><F2> :TagbarToggle<CR>
 
 " minibuffer setting
-let g:miniBufExplVSplit = 14   " column width in chars
+let g:miniBufExplVSplit = 24   " column width in chars
 " Put new window above current or on the left for vertical split
 let g:miniBufExplBRSplit = 0   
 let g:miniBufExplorerAutoStart = 0
@@ -452,4 +458,7 @@ nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
 vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
 nmap <silent><leader># :call AgSearch('n', 'current')<CR>
 vmap <silent><leader># :call AgSearch('v', 'current')<CR>
+
+" GitGutter setting
+let g:gitgutter_eager = 0
 
