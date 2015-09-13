@@ -82,7 +82,7 @@ let g:autoSessionFile=".project.vim"
 let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
 if filereadable("tags")
-    set tags+=tags
+    setglobal tags+=tags
 endif
 func! EnterHandler()
     if filereadable(g:autoSessionFile)
@@ -121,6 +121,7 @@ let g:mapleader = ","
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
 set thesaurus=words
+set dictionary+=words
 "set cursorline
 " setlocal spell spelllang=en_us
 set showcmd " Show (partial) command in the last line of the screen.
@@ -144,10 +145,11 @@ set hidden " hide buffers instead of closing them this
 " means that the current buffer can be put
 " to background without being written; and
 " that marks and undo history are preserved
+set complete-=i
 set completeopt=menu
 set mousemodel=popup " Sets the model to use for the mouse.
 set backspace=indent,eol,start  " backspacing over everything in insert mode
-set wildignore+=*.bak,*.bk,*/.git/*,*/.svn/*,*.o,*.e,*~,*.pyc,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
+set wildignore+=tags,*.bak,*.bk,*/.git/*,*/.svn/*,*.o,*.e,*~,*.pyc,*/tmp/*,*.so,*.swp,*.zip " wildmenu: ignore these extensions
 set number
 set relativenumber
 set cinoptions+=g0 " Place C++ scope declarations 0 characters from the indent of the block they are in.
@@ -174,7 +176,7 @@ set softtabstop=4
 set smarttab
 
 set linespace=0
-set history=1000
+set history=200
 
 set laststatus=2
 if has("gui_running")
@@ -220,7 +222,7 @@ set foldmethod=syntax
 set cindent
 
 set previewheight=10
-" set splitbelow
+set splitbelow
 
 set clipboard=unnamed	" yank to the system register (*) by default
 set pastetoggle=<F6>
@@ -320,10 +322,10 @@ vnoremap < <gv
 vnoremap > >gv
 
 "Smart way to move btw. windows
-nnoremap <C-J> <C-W>j
-nnoremap <C-K> <C-W>k
-nnoremap <C-H> <C-W>h
-nnoremap <C-L> <C-W>l
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-h> <C-W>h
+nnoremap <C-l> <C-W>l
 nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
 " nnoremap <C-[> <Esc>:exec("ptjump ".expand("<cword>"))<Esc>
@@ -462,3 +464,19 @@ vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 " GitGutter setting
 let g:gitgutter_eager = 0
 
+" Extradite setting
+let g:extradite_showhash = 1
+
+" surround setting
+let g:surround_{char2nr('-')} = "<% \r %>"
+let g:surround_{char2nr('=')} = "<%= \r %>"
+let g:surround_{char2nr('8')} = "/* \r */"
+let g:surround_{char2nr('s')} = " \r"
+let g:surround_{char2nr('^')} = "/^\r$/"
+let g:surround_indent = 1
+
+" Fugitive setting
+autocmd User fugitive 
+  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \   nnoremap <buffer> .. :edit %:h<CR> |
+  \ endif
