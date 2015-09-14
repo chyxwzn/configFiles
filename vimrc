@@ -25,6 +25,7 @@ fun! VisualReplace()
     let l:pattern = substitute(l:pattern, "\n$", "", "")
     let l:word = input("Replace " . l:pattern . " with:") 
     :exe '%s/' . l:pattern . '/' . l:word . '/gc' 
+    let @" = l:saved_reg
 endfun 
 
 fun! Replace() 
@@ -286,27 +287,16 @@ nnoremap <silent><leader>v V`]
 
 nnoremap <silent><leader>wf :call WriteFormat()<cr>:w!<cr>
 
-" nno <Leader>h :tabprevious<CR>
-" nno <Leader>l :tabnext<CR>
-" nnoremap <Leader>tn :tabnew %:p<CR>
-" nnoremap <silent><leader>tc :tabclose<CR>
-
-" diff
-nnoremap ]c ]czz
-nnoremap [c [czz
+nnoremap <silent><leader>h :tabprevious<CR>
+nnoremap <silent><leader>l :tabnext<CR>
+nnoremap <silent><leader>tn :tabnew %:p<CR>
+nnoremap <silent><leader>tc :tabclose<CR>
 
 " default to very magic
 "no / /\v
 
 " gO to create a new line above and below cursor in normal mode
 nnoremap go O<ESC>jo<ESC>k
-
-"When searching for words with * and navigating with N/n, keep line centered vertically
-nnoremap G Gzz
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap } }zz
-nnoremap { {zz
 
 "open tag in new window
 map <silent><leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
@@ -413,7 +403,7 @@ let g:tagbar_foldlevel = 1
 nnoremap <silent><F2> :TagbarToggle<CR>
 
 " minibuffer setting
-let g:miniBufExplVSplit = 14   " column width in chars
+let g:miniBufExplVSplit = 24   " column width in chars
 " Put new window above current or on the left for vertical split
 let g:miniBufExplBRSplit = 0   
 let g:miniBufExplorerAutoStart = 0
@@ -447,9 +437,14 @@ else
 endif
 
 " ag (the silver searcher) setting
-let g:ag_qhandler="copen 14"
+let g:ag_qhandler="copen 24"
 nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
 vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
 nmap <silent><leader># :call AgSearch('n', 'current')<CR>
 vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 
+" GitGutter
+let g:gitgutter_highlight_lines = 1
+nmap <Leader>ha <Plug>GitGutterStageHunk
+nmap <Leader>hu <Plug>GitGutterRevertHunk
+nmap <Leader>hv <Plug>GitGutterPreviewHunk
