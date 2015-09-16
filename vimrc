@@ -396,10 +396,12 @@ if filereadable(g:ycm_global_ycm_extra_conf)
 else
     let g:loaded_youcompleteme=1
     " neocomplete Settings
-    let g:neocomplete#enable_at_startup = 1
-    let g:neocomplete#enable_ignore_case = 1
-    let g:neocomplete#data_directory = "~/.cache/neocomplete"
-    inoremap <expr><C-e>     neocomplete#cancel_popup()
+    if has('lua')
+        let g:neocomplete#enable_at_startup = 1
+        let g:neocomplete#enable_ignore_case = 1
+        let g:neocomplete#data_directory = "~/.cache/neocomplete"
+        inoremap <expr><C-e>     neocomplete#cancel_popup()
+    endif
 endif
 
 " UltiSnips setting
@@ -449,7 +451,7 @@ else
 endif
 
 " ag (the silver searcher) setting
-let g:ag_qhandler="copen 24"
+let g:ag_qhandler="copen 14"
 nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
 vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
 nmap <silent><leader># :call AgSearch('n', 'current')<CR>
@@ -458,12 +460,10 @@ vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 " GitGutter setting
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_eager = 0
+let g:gitgutter_realtime = 0
 nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hu <Plug>GitGutterRevertHunk
 nmap <Leader>hv <Plug>GitGutterPreviewHunk
-
-" Extradite setting
-let g:extradite_showhash = 0
 
 " surround setting
 let g:surround_{char2nr('-')} = "<% \r %>"
