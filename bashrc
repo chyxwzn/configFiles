@@ -110,6 +110,9 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+stty ixany 
+stty ixoff -ixon
+
 export PATH=/home/shawn/Builds/bin:$PATH
 # export TERM=xterm-256color
 export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;04;32m\]\u\[\033[00m\]:\[\033[01;37m\]\W\[\033[31m\] \$ \[\033[00m\]'
