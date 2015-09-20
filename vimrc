@@ -257,12 +257,9 @@ map <silent>K <C-u>zz
 map <silent>J <C-d>zz
 
 " CTRL-A is Select all
-nnoremap <C-A> gggH<C-O>G
-inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
-cnoremap <C-A> <C-C>gggH<C-O>G
-onoremap <C-A> <C-C>gggH<C-O>G
-snoremap <C-A> <C-C>gggH<C-O>G
-xnoremap <C-A> <C-C>ggVG
+nnoremap <C-A> ggVG
+inoremap <C-A> <C-O>gg<C-O>V<C-O>G
+vnoremap <C-A> <C-C>ggVG
 
 " Use CTRL-S for saving, also in Insert mode
 noremap  <C-S> :update<CR>
@@ -306,6 +303,13 @@ map <silent><leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
 vnoremap <silent> # :call VisualSearch('b')<CR>
+
+"When searching for words with * and navigating with N/n, keep line centered vertically
+nnoremap G Gzz
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap } }zz
+nnoremap { {zz
 
 "replace the current word in all opened buffers
 nmap <silent><leader>r :call Replace()<CR>
