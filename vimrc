@@ -121,8 +121,8 @@ let g:mapleader = ","
 " insert mode
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
-set thesaurus=words
-set dictionary+=words
+set thesaurus=$VIM/words
+set dictionary=$VIM/words
 "set cursorline
 " setlocal spell spelllang=en_us
 set showcmd " Show (partial) command in the last line of the screen.
