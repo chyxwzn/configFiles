@@ -1,29 +1,58 @@
 #!/bin/bash
 
-function add_lunch_combo()
+LUNCH_MENU_CHOICES=()
+LUNCH_MENU_COMMENTS=()
+
+MAKE_LIST_FILE=$HOME/make_list.txt
+
+function add_automake_combo()
 {
     local new_combo=$1
     local c
-    for c in ${LUNCH_MENU_CHOICES[@]}; do
+    for c in "${LUNCH_MENU_CHOICES[@]}"; do
         if [[ "$new_combo" = "$c" ]]; then
             return
         fi
     done
-    LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
+    LUNCH_MENU_CHOICES=("${LUNCH_MENU_CHOICES[@]}" "$new_combo")
+}
+
+function add_comment_combo()
+{
+    local new_combo=$1
+    local c
+    for c in "${LUNCH_MENU_COMMENTS[@]}"; do
+        if [[ "$new_combo" = "$c" ]]; then
+            return
+        fi
+    done
+    LUNCH_MENU_COMMENTS=("${LUNCH_MENU_COMMENTS[@]}" "$new_combo")
 }
 
 function parse_make_list()
 {
-
+    while read line; do
+        if (echo -n "$line" | grep -q -e '#.*'); then
+            add_comment_combo "$((${#LUNCH_MENU_CHOICES[@]}+1))_$line"
+        else
+            add_automake_combo "$line"
+        fi
+    done < $MAKE_LIST_FILE
 }
-
-function print_lunch_menu()
+#
+function print_automake_menu()
 {
-    echo "Lunch menu... pick a combo:"
+    echo "Make list... pick a combo:"
 
     local i=1
     local choice
-    for choice in ${LUNCH_MENU_CHOICES[@]}; do
+    for choice in "${LUNCH_MENU_CHOICES[@]}"; do
+        local j=1
+        local comment
+        for comment in "${LUNCH_MENU_COMMENTS[@]}"; do
+            echo "  $comment" | sed -n -e "s/${i}_//p"
+            j=$(($j+1))
+        done
         echo "  $i. $choice"
         i=$(($i+1))
     done
@@ -31,21 +60,27 @@ function print_lunch_menu()
     echo
 }
 
-function lunch()
+function automake()
 {
     local answer
-    local mosesq=
+    local mosesq=0
+    local show_list=1
     
+    parse_make_list
     if (echo -n $1 | grep -q -e "^[0-9][0-9]*$"); then
         answer=$1
-    elif [[ $1 = 'mosesq' ]]; then
-        mosesq=1
-        if (echo -n $1 | grep -q -e "^[0-9][0-9]*$"); then
-            answer=$1
-        fi
+        show_list=0
     else
-        parse_make_list
-        print_lunch_menu
+        if [[ $1 == 'mosesq' ]]; then
+            mosesq=1
+            if (echo -n $2 | grep -q -e "^[0-9][0-9]*$"); then
+                answer=$2
+                show_list=0
+            fi
+        fi
+    fi
+    if [[ $show_list == 1 ]]; then
+        print_automake_menu
         echo -n "Which would you like? "
         read answer
     fi
@@ -57,4 +92,11 @@ function lunch()
             selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
         fi
     fi
+    if [[ $mosesq == 1 ]]; then
+        mosesq $selection
+    else
+        $selection
+    fi
 }
+
+automake $@
