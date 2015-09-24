@@ -31,7 +31,12 @@ function add_comment_combo()
 
 function parse_make_list()
 {
+    if ! [[ -f $MAKE_LIST_FILE ]]; then
+        echo $MAKE_LIST_FILE "doesn't exists"
+        exit 1
+    fi
     while read line; do
+        # lines start with # are comments
         if (echo -n "$line" | grep -q -e '#.*'); then
             add_comment_combo "$((${#LUNCH_MENU_CHOICES[@]}+1))_$line"
         else
@@ -39,7 +44,7 @@ function parse_make_list()
         fi
     done < $MAKE_LIST_FILE
 }
-#
+
 function print_automake_menu()
 {
     echo "Make list... pick a combo:"
@@ -91,6 +96,11 @@ function automake()
         if [[ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]]; then
             selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
         fi
+    fi
+    if [[ -z "$selection" ]]; then
+        echo
+        echo "Invalid combo: $answer"
+        exit 1
     fi
     if [[ $mosesq == 1 ]]; then
         mosesq $selection
