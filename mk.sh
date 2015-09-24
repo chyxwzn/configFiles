@@ -32,7 +32,7 @@ function add_comment_combo()
 function parse_make_list()
 {
     if ! [[ -f $MAKE_LIST_FILE ]]; then
-        echo $MAKE_LIST_FILE "doesn't exists"
+        echo $MAKE_LIST_FILE "doesn't exist"
         exit 1
     fi
     while read line; do
