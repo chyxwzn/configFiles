@@ -123,11 +123,13 @@ let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
 if has('win32')
     let dictDir=$HOME.'/vimfiles/bundle/dictionary/'
+    set thesaurus=~/vimfiles/bundle/dictionary/words
+    set dictionary=~/vimfiles/bundle/dictionary/words
 else
     let dictDir=$HOME.'/.vim/bundle/dictionary/'
+    set thesaurus=~/vimfiles/bundle/dictionary/words
+    set dictionary=~/vimfiles/bundle/dictionary/words
 endif
-set thesaurus=dictDir.'words'
-set dictionary=dictDir.'words'
 "set cursorline
 " setlocal spell spelllang=en_us
 set showcmd " Show (partial) command in the last line of the screen.
