@@ -56,8 +56,8 @@ if [[ $select_mode == 0 ]]; then
         if [[ -f "$file" ]]; then
             echo
             echo `date`
-            echo "mtk_build -x . -o $file"
-            mtk_build -x . -o $file
+            echo "mtkbuild -o . -x $file"
+            mtkbuild -o . -x $file
         fi
     done
 else
@@ -71,8 +71,8 @@ else
                 if [[ $update_time > $last_update_time ]]; then
                     echo
                     echo `date`
-                    echo "mtk_build -x . -o $file"
-                    mtk_build -x . -o $file
+                    echo "mtkbuild -o . -x $file"
+                    mtkbuild -o . -x $file
                 fi
             fi
         done
