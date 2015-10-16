@@ -127,8 +127,8 @@ if has('win32')
     set dictionary=~/vimfiles/bundle/dictionary/words
 else
     let dictDir=$HOME.'/.vim/bundle/dictionary/'
-    set thesaurus=~/vimfiles/bundle/dictionary/words
-    set dictionary=~/vimfiles/bundle/dictionary/words
+    set thesaurus=~/.vim/bundle/dictionary/words
+    set dictionary=~/.vim/bundle/dictionary/words
 endif
 "set cursorline
 " setlocal spell spelllang=en_us
