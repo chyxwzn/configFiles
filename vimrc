@@ -472,9 +472,10 @@ vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_eager = 0
 let g:gitgutter_realtime = 0
+nmap [h <Plug>GitGutterPrevHunk
+nmap ]h <Plug>GitGutterNextHunk
 nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hu <Plug>GitGutterRevertHunk
-nmap <Leader>hv <Plug>GitGutterPreviewHunk
 
 " surround setting
 let g:surround_{char2nr('-')} = "<% \r %>"
