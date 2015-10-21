@@ -30,7 +30,7 @@ endfun
 
 fun! Replace() 
     let l:word = input("Replace " . expand('<cword>') . " with:") 
-    :exe 'bufdo! %s/\<' . expand('<cword>') . '\>/' . l:word . '/gc' 
+    :exe '%s/\<' . expand('<cword>') . '\>/' . l:word . '/gc' 
 endfun
 
 function! VisualSearch(direction) range
