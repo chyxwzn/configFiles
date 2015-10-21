@@ -422,7 +422,7 @@ let g:UltiSnipsJumpBackwardTrigger="<C-b>"
 let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 
 " tagbar setting
-" let g:tagbar_show_linenumbers = 1
+let g:tagbar_show_linenumbers = 1
 let g:tagbar_autofocus = 1
 let g:tagbar_foldlevel = 1
 nnoremap <silent><F2> :TagbarToggle<CR>
