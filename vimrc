@@ -428,10 +428,9 @@ let g:tagbar_foldlevel = 1
 nnoremap <silent><F2> :TagbarToggle<CR>
 
 " minibuffer setting
-let g:miniBufExplVSplit = 24   " column width in chars
 " Put new window above current or on the left for vertical split
 let g:miniBufExplBRSplit = 0   
-let g:miniBufExplorerAutoStart = 0
+let g:miniBufExplorerAutoStart = 1
 nnoremap <silent><F3> :MBEToggle<cr>
 nnoremap <silent><Left> :bp<CR>
 nnoremap <silent><Right> :bn<CR>
