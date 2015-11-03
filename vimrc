@@ -412,6 +412,7 @@ else
         let g:neocomplete#enable_ignore_case = 1
         let g:neocomplete#data_directory = "~/.cache/neocomplete"
         inoremap <expr><C-e>     neocomplete#cancel_popup()
+		inoremap <expr><C-g>     neocomplete#undo_completion()
     endif
 endif
 
@@ -486,3 +487,21 @@ let g:surround_indent = 1
 
 " StarDict
 let g:stardict_data_dir = dictDir
+
+" jedi-vim
+autocmd FileType python setlocal omnifunc=jedi#completions
+let g:jedi#completions_enabled = 0
+let g:jedi#auto_vim_configuration = 0
+if !exists('g:neocomplete#force_omni_input_patterns')
+  let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.python =
+\ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+" alternative pattern: '\h\w*\|[^. \t]\.\w*'
+let g:jedi#goto_command = "<leader>g"
+let g:jedi#goto_assignments_command = "<leader>a"
+let g:jedi#goto_definitions_command = ""
+let g:jedi#documentation_command = "<leader>d"
+let g:jedi#usages_command = "<leader>u"
+let g:jedi#completions_command = ""
+let g:jedi#rename_command = ""
