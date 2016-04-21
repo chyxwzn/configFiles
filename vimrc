@@ -113,6 +113,18 @@ function! <SID>BufCloseOthers()
     endfor  
 endfunction
 
+let b:folded = 1
+
+function! ToggleFold()
+    if( b:folded == 0 )
+        exec "normal! zM"
+        let b:folded = 1
+    else
+        exec "normal! zR"
+        let b:folded = 0
+    endif
+endfunction
+
 "============== General Settings ===============
 "Get out of VI's compatible mode..
 set nocompatible
@@ -263,6 +275,8 @@ nnoremap <silent>m :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
 nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
 map <silent>K <C-u>zz
 map <silent>J <C-d>zz
+map <buffer> f za
+map <buffer> F :call ToggleFold()<CR>
 
 " CTRL-A is Select all
 nnoremap <C-A> ggVG
