@@ -136,7 +136,7 @@ set showcmd " Show (partial) command in the last line of the screen.
 set ruler " Show the line and column number of the cursor position, separated by a comma.
 set incsearch " While typing a search command, show where the pattern, as it was typed so far, matches.
 set wildmenu " When 'wildmenu' is on, command-line completion operates in an enhanced mode.
-if !has("win32")
+if !has("gui_running")
     set term=xterm-256color " colored airline
     " Set this, so the background color will not change inside tmux (http://snk.tuxfamily.org/log/vim-256color-bce.html)
     set t_ut=
@@ -231,6 +231,7 @@ set cindent
 
 set previewheight=10
 set splitbelow
+set diffopt=filler,vertical
 
 set clipboard=unnamed	" yank to the system register (*) by default
 set pastetoggle=<F6>
@@ -333,8 +334,6 @@ nnoremap <C-h> <C-W>h
 nnoremap <C-l> <C-W>l
 nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
-" nnoremap <C-[> <Esc>:exec("ptjump ".expand("<cword>"))<Esc>
-noremap <silent><leader>dt :diffthis<CR>
 
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_US<CR>
 
@@ -347,9 +346,11 @@ if filereadable(g:autoSessionFile)
 endif
 
 if has("win32")
-    noremap <silent><leader>vr :e ~/_vimrc<CR>
+    nnoremap <silent><leader>vr :e ~/_vimrc<CR>
+    nnoremap <silent><leader>vs :source ~/_vimrc<CR>
 else
     nnoremap <silent><leader>vr :e ~/.vimrc<CR>
+    nnoremap <silent><leader>vs :source ~/.vimrc<CR>
 endif
 
 "Quickfix and Locationlist
@@ -491,6 +492,7 @@ let g:stardict_data_dir = dictDir
 " jedi-vim
 autocmd FileType python setlocal omnifunc=jedi#completions
 let g:jedi#completions_enabled = 0
+let g:jedi#show_call_signatures = 0
 let g:jedi#auto_vim_configuration = 0
 if !exists('g:neocomplete#force_omni_input_patterns')
   let g:neocomplete#force_omni_input_patterns = {}
