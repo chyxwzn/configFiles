@@ -1,7 +1,54 @@
 " .vimrc
-" Pathogen
-call pathogen#infect()
-call pathogen#helptags()
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'rking/ag.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'FelikZ/ctrlp-py-matcher'
+Plugin 'chyxwzn/dictionary.vim'
+Plugin 'Konfekt/FastFold'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'fholgado/minibufexpl.vim'
+Plugin 'Shougo/neocomplete.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'majutsushi/tagbar'
+Plugin 'tomtom/tcomment_vim'
+" Plugin 'Valloric/YouCompleteMe'
+Plugin 'SirVer/ultisnips'
+Plugin 'vim-airline/vim-airline'
+Plugin 'chyxwzn/vim-code2html'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'chrisbra/vim-diff-enhanced'
+Plugin 'junegunn/vim-easy-align'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'chyxwzn/vim-fugitive'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'chyxwzn/skittles_berry.vim'
+Plugin 'chyxwzn/vim-snippets'
+Plugin 'chyxwzn/vim-stardict'
+Plugin 'kshenoy/vim-signature'
+Plugin 'gcmt/wildfire.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'vim-scripts/ZoomWin'
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
 
 " Filetype
 filetype plugin indent on
@@ -83,7 +130,7 @@ let g:autoSessionFile=".project.vim"
 let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
 if filereadable("tags")
-    setglobal tags+=tags
+    setglobal tags=tags
 endif
 func! EnterHandler()
     if filereadable(g:autoSessionFile)
@@ -114,7 +161,6 @@ function! <SID>BufCloseOthers()
 endfunction
 
 let b:folded = 1
-
 function! ToggleFold()
     if( b:folded == 0 )
         exec "normal! zM"
@@ -134,13 +180,13 @@ let g:mapleader = ","
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
 if has('win32')
-    let dictDir=$HOME.'/vimfiles/bundle/dictionary/'
-    set thesaurus=~/vimfiles/bundle/dictionary/words
-    set dictionary=~/vimfiles/bundle/dictionary/words
+    let dictDir=$HOME.'/vimfiles/bundle/dictionary.vim/'
+    set thesaurus=~/vimfiles/bundle/dictionary.vim/words
+    set dictionary=~/vimfiles/bundle/dictionary.vim/words
 else
-    let dictDir=$HOME.'/.vim/bundle/dictionary/'
-    set thesaurus=~/.vim/bundle/dictionary/words
-    set dictionary=~/.vim/bundle/dictionary/words
+    let dictDir=$HOME.'/.vim/bundle/dictionary.vim/'
+    set thesaurus=~/.vim/bundle/dictionary.vim/words
+    set dictionary=~/.vim/bundle/dictionary.vim/words
 endif
 "set cursorline
 " setlocal spell spelllang=en_us
@@ -244,6 +290,9 @@ set cindent
 set previewheight=10
 set splitbelow
 set diffopt=filler,vertical
+if &diff
+    let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=histogram")'
+endif
 
 set clipboard=unnamed	" yank to the system register (*) by default
 set pastetoggle=<F6>
@@ -256,6 +305,7 @@ try
 catch
 endtry
 
+set omnifunc=syntaxcomplete#Complete
 
 " make type colon easily 
 nnoremap ; :
@@ -270,13 +320,14 @@ nnoremap k gk
 noremap H 0
 noremap L $
 noremap Y y$
-noremap gp o<Esc>p " paster below current line
-nnoremap <silent>m :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
-nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
+" paster below current line
+noremap gp o<Esc>p
+nnoremap <silent>M :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
+" nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
 map <silent>K <C-u>zz
 map <silent>J <C-d>zz
-map <buffer> f za
-map <buffer> F :call ToggleFold()<CR>
+map <silent>f za
+map <silent>F :call ToggleFold()<CR>
 
 " CTRL-A is Select all
 nnoremap <C-A> ggVG
@@ -284,27 +335,27 @@ inoremap <C-A> <C-O>gg<C-O>V<C-O>G
 vnoremap <C-A> <C-C>ggVG
 
 " Use CTRL-S for saving, also in Insert mode
-noremap  <C-S> :update<CR>
-vnoremap <C-S> <C-C>:update<CR>
-inoremap <C-S> <C-O>:update<CR>
+noremap  <silent><C-S> :update<CR>
+vnoremap <silent><C-S> <C-C>:update<CR>
+inoremap <silent><C-S> <C-O>:update<CR>
 
-" inoremap <silent><expr><C-j> pumvisible() ? "":"\<Down>"
-" inoremap <silent><expr><C-k> pumvisible() ? "\<C-x>\<C-k>":"\<Up>"
 inoremap <silent><C-j> <Down>
 inoremap <silent><C-k> <Up>
 inoremap <silent><C-h> <Left>
 inoremap <silent><C-l> <Right>
-inoremap <silent><C-t> <C-e><C-x><C-t>
 
 "Fast remove highlight search
-nnoremap <silent><leader><cr> :noh<cr>
+nnoremap <silent><leader><Enter> :noh<cr>
+
+"toggle line number
+nnoremap <silent><C-n> :set number!<cr>:set relativenumber!<cr>
 
 " move current line
-nno <C-Down> ddp
-nno <C-Up> ddkP
+nnoremap <C-Down> ddp
+nnoremap <C-Up> ddkP
 
 " Reselect text that was just pasted with ,v
-nnoremap <silent><leader>v V`]
+nnoremap <silent><leader>v `[v`]
 
 nnoremap <silent><leader>wf :call WriteFormat()<cr>:w!<cr>
 
@@ -316,7 +367,7 @@ nnoremap <silent><leader>tc :tabclose<CR>
 " default to very magic
 "no / /\v
 
-" gO to create a new line above and below cursor in normal mode
+" create a new line above and below cursor in normal mode
 nnoremap go O<ESC>jo<ESC>k
 
 "open tag in new window
@@ -370,13 +421,6 @@ endif
 "Quickfix and Locationlist
 nnoremap <silent><F8> :lne<CR>
 nnoremap <silent><F7> :lp<CR>
-" let g:lt_location_list_toggle_map = '<leader><leader>l'
-" let g:lt_quickfix_list_toggle_map = '<leader><leader>q'
-
-autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
-au BufRead,BufNewFile *.js set ft=javascript syntax=jquery
-" autocmd FileType c,cpp map <buffer> <F5> :make<cr>:cw 10<CR>
 
 
 
@@ -410,11 +454,13 @@ let g:EasyMotion_leader_key = '<leader>'
 
 " youcompleteme setting
 let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
+let g:ycm_server_python_interpreter = 'python3'
 if filereadable(g:ycm_global_ycm_extra_conf)
-    let g:ycm_collect_identifiers_from_tags_files = 1
+    let g:neocomplete#enable_at_startup = 0
+    let g:ycm_collect_identifiers_from_tags_files = 0
     let g:ycm_show_diagnostics_ui = 0
     let g:ycm_auto_start_csharp_server = 0
-    let g:ycm_key_invoke_completion = '<C-/>'
+    let g:ycm_key_invoke_completion = '<C-y>'
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_always_populate_location_list = 1
     " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
@@ -428,6 +474,9 @@ else
         let g:neocomplete#data_directory = "~/.cache/neocomplete"
         inoremap <expr><C-e>     neocomplete#cancel_popup()
 		inoremap <expr><C-g>     neocomplete#undo_completion()
+        " for thesaurus completion
+        inoremap <silent><C-t> <C-e><C-x><C-t>
+        inoremap <silent><C-o> <C-e><C-x><C-o>
     endif
 endif
 
@@ -455,13 +504,13 @@ nnoremap <silent><C-W>c :MBEbw<cr>:wincmd c<cr>
 nnoremap <silent><leader>bdo :BcloseOthers<cr>
 
 " EasyAlign setting
-vmap <Enter> <Plug>(EasyAlign)
+vmap <silent><leader><Enter> <Plug>(EasyAlign)
 
 " ctrlp setting
+let g:ctrlp_by_filename = 1
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 if filereadable(g:autoSessionFile)
-    let g:ctrlp_map = '<leader><c-p>'
     let g:ctrlp_use_caching = 1
-    let g:ctrlp_by_filename = 1
     let g:ctrlp_clear_cache_on_exit = 0
     let g:ctrlp_cache_dir = g:origPwd
     nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
@@ -472,7 +521,6 @@ if filereadable(g:autoSessionFile)
     endif
 else
     let g:ctrlp_use_caching = 0
-    let g:ctrlp_by_filename = 1
     let g:ctrlp_user_command = 'ag -l --nocolor --depth 0 -g "" %s'
 endif
 
@@ -521,3 +569,6 @@ let g:jedi#documentation_command = "<leader>d"
 let g:jedi#usages_command = "<leader>u"
 let g:jedi#completions_command = ""
 let g:jedi#rename_command = ""
+
+" wildfire
+nmap <leader>s <Plug>(wildfire-quick-select)
