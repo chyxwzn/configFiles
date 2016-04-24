@@ -100,7 +100,7 @@ func! WriteFormat()
 endfunc
 
 func! AgSearch(mode, scope)
-    let l:cscopeFile = getcwd() . "/cscope.files"
+    let l:cscopeFile = getcwd() . "/.projDirs"
     if filereadable(l:cscopeFile)
         if a:scope == 'cscope'
             let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:cscopeFile)

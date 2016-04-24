@@ -8,6 +8,7 @@ if [[ $# -eq 1 ]] && ! [[ -d $1 ]] && [[ $1 -eq 0 ]]; then
     rm -f tags > /dev/null 2>&1
     rm -f .project.vim > /dev/null 2>&1
     rm -f *%*.txt > /dev/null 2>&1
+    rm -f .projDirs > /dev/null 2>&1
     exit 0
 fi
 
@@ -18,6 +19,7 @@ while [[ -n $1 ]]; do
         else
             addsrc.sh $1 0
         fi
+        echo $1 >> .projDirs
     else
         echo $1 is not a directory
         exit 1
