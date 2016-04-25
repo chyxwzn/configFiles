@@ -538,6 +538,9 @@ nmap <silent><leader># :call AgSearch('n', 'current')<CR>
 vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 
 " GitGutter setting
+if has("win32") && has("gui_running")
+    let g:gitgutter_enabled = 0
+endif
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_eager = 0
 let g:gitgutter_realtime = 0
