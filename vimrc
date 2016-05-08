@@ -3,11 +3,17 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+if has("win32")
+    set rtp+=$HOME/vimfiles/bundle/Vundle.vim
+    call vundle#begin('$USERPROFILE/vimfiles/bundle/')
+else
+    set rtp+=~/.vim/bundle/Vundle.vim
+    call vundle#begin()
+endif
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'rking/ag.vim'
+Plugin 'chazy/cscope_maps'
 Plugin 'kien/ctrlp.vim'
 Plugin 'FelikZ/ctrlp-py-matcher'
 Plugin 'chyxwzn/dictionary.vim'
@@ -530,6 +536,9 @@ nmap <silent><leader># :call AgSearch('n', 'current')<CR>
 vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 
 " GitGutter setting
+if has("win32") && has("gui_running")
+    let g:gitgutter_enabled = 0
+endif
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_eager = 0
 let g:gitgutter_realtime = 0

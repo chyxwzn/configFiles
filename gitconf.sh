@@ -1,4 +1,5 @@
 # git config --global http.proxy 127.0.0.1:8087
+git config core.filemode false
 git config --global user.name "chyxwzn"
 git config --global user.email chyxwzn@gmail.com
 git config --global push.default simple
