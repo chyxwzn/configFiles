@@ -21,6 +21,7 @@ Plugin 'tomtom/tcomment_vim'
 " Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'chyxwzn/vim-code2html'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'chrisbra/vim-diff-enhanced'
@@ -160,14 +161,12 @@ function! <SID>BufCloseOthers()
     endfor  
 endfunction
 
-let b:folded = 1
+"use foldclosed({lnum}) to tell if fold is closed or not now
 function! ToggleFold()
-    if( b:folded == 0 )
-        exec "normal! zM"
-        let b:folded = 1
+    if( foldclosed(".") == -1 )
+        exec "normal! zMzz"
     else
-        exec "normal! zR"
-        let b:folded = 0
+        exec "normal! zRzz"
     endif
 endfunction
 
@@ -290,9 +289,6 @@ set cindent
 set previewheight=10
 set splitbelow
 set diffopt=filler,vertical
-if &diff
-    let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=histogram")'
-endif
 
 set clipboard=unnamed	" yank to the system register (*) by default
 set pastetoggle=<F6>
@@ -510,6 +506,8 @@ vmap <silent><leader><Enter> <Plug>(EasyAlign)
 let g:ctrlp_by_filename = 1
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 if filereadable(g:autoSessionFile)
+    " disable default ctrlp action and always ctrlp project directory
+    let g:ctrlp_map = '<leader><C-p>'
     let g:ctrlp_use_caching = 1
     let g:ctrlp_clear_cache_on_exit = 0
     let g:ctrlp_cache_dir = g:origPwd

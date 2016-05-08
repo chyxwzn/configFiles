@@ -3,6 +3,7 @@ git config --global user.name "chyxwzn"
 git config --global user.email chyxwzn@gmail.com
 git config --global push.default simple
 git config --global merge.tool vimdiff
+git config --global core.editor vim
 git config --global credential.helper cache --timeout=36000
 git config --global diff.tool vimdiff
 git config --global difftool.prompt false
