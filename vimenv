@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import shutil
+
+androidGfxSources = [
+                        "frameworks/native/include/gui/",
+                        "frameworks/native/include/ui/",
+                        "frameworks/native/include/android/",
+                        "frameworks/native/libs/gui/",
+                        "frameworks/native/libs/ui/",
+                        # "frameworks/native/vulkan/",
+                        "frameworks/native/opengl/",
+                        "frameworks/base/libs/hwui/",
+                        "frameworks/base/core/java/android/view/",
+                        "frameworks/base/core/jni/",
+                        "frameworks/native/services/surfaceflinger/",
+                        "frameworks/base/core/java/android/hardware/display/",
+                        "frameworks/av/cmds/screenrecord/",
+                        "frameworks/base/rs/",
+                        "frameworks/base/graphics/",
+                        "frameworks/native/cmds/atrace/",
+                        "frameworks/native/cmds/dumpsys/",
+                        "frameworks/native/cmds/flatland/",
+                        "frameworks/base/services/core/java/com/android/server/wm/",
+                        "frameworks/base/services/core/java/com/android/server/display/",
+                        "system/core/include/system/",
+                        "system/core/include/cutils/",
+                        "system/core/libsync/",
+                        "system/core/libpixelflinger/"
+                    ]
+
+def createProjectFiles(sourceList):
+    assert((type(sourceList) == list) and (len(sourceList) >= 1))
+    for source in sourceList[:-1]:
+        os.system("sh addsrc.sh " + source)
+        os.system("echo " + source + " >> .projDirs")
+    else:
+        os.system("sh addsrc.sh " + sourceList[-1] + " 1")
+        os.system("echo " + sourceList[-1] + " >> .projDirs")
+        os.system("touch .project.vim")
+
+projectFiles = [
+                    "ctags.files",
+                    "tags",
+                    ".project.vim",
+                    ".viminfo.vim",
+                    ".projDirs",
+                    "mru",
+                    "hist",
+               ]
+def cleanProjectFiles():
+    for item in projectFiles:
+        if os.path.exists(item):
+            if os.path.isfile(item):
+                os.remove(item)
+            else:
+                shutil.rmtree(item)
+    os.system("rm -f *%*.txt > /dev/null 2>&1")
+    neocache = "~/.cache/neocomplete/tags_cache/" + (os.path.expandvars("$PWD") + "/tags").replace("/", "=+")
+    os.system("rm -f " + neocache + " > /dev/null 2>&1")
+
+def clearProjectFiles():
+    os.system("rm -f .project.vim > /dev/null 2>&1")
+    os.system("rm -f .viminfo.vim > /dev/null 2>&1")
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == ".":
+        sourceList = ["."]
+        createProjectFiles(sourceList)
+    elif sys.argv[1] == "gfx":
+        sourceList = androidGfxSources
+        createProjectFiles(sourceList)
+    elif sys.argv[1] == "clean":
+        cleanProjectFiles()
+    elif sys.argv[1] == "clear":
+        clearProjectFiles()
+else:
+    sys.exit(sys.argv[0] + " [gfx|.|clean|clear]")
+

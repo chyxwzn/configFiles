@@ -3,28 +3,24 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
-if has("win32")
-    set rtp+=$HOME/vimfiles/bundle/Vundle.vim
-    call vundle#begin('$USERPROFILE/vimfiles/bundle/')
-else
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
-endif
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'rking/ag.vim'
-Plugin 'chazy/cscope_maps'
 Plugin 'kien/ctrlp.vim'
 Plugin 'FelikZ/ctrlp-py-matcher'
 Plugin 'chyxwzn/dictionary.vim'
 Plugin 'Konfekt/FastFold'
 Plugin 'davidhalter/jedi-vim'
+Plugin 'artur-shaik/vim-javacomplete2'
+Plugin 'tikhomirov/vim-glsl'
 Plugin 'fholgado/minibufexpl.vim'
 Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'tomtom/tcomment_vim'
-" Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -42,6 +38,7 @@ Plugin 'kshenoy/vim-signature'
 Plugin 'gcmt/wildfire.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'vim-scripts/ZoomWin'
+Plugin 'aklt/plantuml-syntax'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 " To ignore plugin indent changes, instead use:
@@ -67,9 +64,9 @@ syntax on
 " Color Settings
 set background=dark
 " set background=light
-color skittles_berry
-" let g:solarized_termcolors=256
-" color solarized
+" color skittles_berry
+let g:solarized_termcolors=256
+color solarized
 
 " ======= functions =======
 fun! VisualReplace() 
@@ -107,16 +104,17 @@ func! WriteFormat()
 endfunc
 
 func! AgSearch(mode, scope)
-    let l:cscopeFile = getcwd() . "/.projDirs"
-    if filereadable(l:cscopeFile)
-        if a:scope == 'cscope'
-            let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:cscopeFile)
+    " a simple list of ctags file list
+    let l:ctagsFile = getcwd() . "/.projDirs"
+    if filereadable(l:ctagsFile)
+        if a:scope == 'ctags'
+            let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:ctagsFile)
         else
             let l:files = bufname("%")
         endif
     else
-        if a:scope == 'cscope'
-            echom "there is no cscope.files"
+        if a:scope == 'ctags'
+            echom "there is no ctags.files"
             return 1
         else
             let l:files = bufname("%")
@@ -255,7 +253,8 @@ if has("gui_running")
         set guifont=Courier\ New:h12
         set guioptions-=T
     else
-        set guifont=Monospace\ 13
+        set guifont=Monaco:h14
+        " set guifont=Menlo:h14
         set mouse=a
         set guioptions-=T
         "set guioptions-=m
@@ -275,7 +274,7 @@ set showmatch
 "Restore cursor to file position in previous editing session
 " set viminfo='10,\"100,:20,n~/.viminfo
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
-au GUIEnter * simalt ~x " Maximize gvim window
+" au GUIEnter * simalt ~x " Maximize gvim window
 set sessionoptions-=curdir
 set sessionoptions+=sesdir
 
@@ -286,7 +285,7 @@ set noswapfile
 
 "Enable folding, I find it very useful
 set foldenable
-set foldlevel=0
+set foldlevel=1
 set foldmethod=syntax
 
 "C-style indeting
@@ -403,6 +402,7 @@ nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
 
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_US<CR>
+nnoremap <silent><leader>cf :set fileencoding=utf8<CR>:w<CR>
 
 " auto save and load session
 if filereadable(g:autoSessionFile)
@@ -424,7 +424,20 @@ endif
 nnoremap <silent><F8> :lne<CR>
 nnoremap <silent><F7> :lp<CR>
 
-
+if has("cscope")
+    set csprg=/usr/local/bin/cscope
+    set csto=0
+    set cst
+    set nocsverb
+    " add any database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out
+    " else add database pointed to by environment
+    elseif $CSCOPE_DB != ""
+        cs add $CSCOPE_DB
+    endif
+    set csverb
+endif
 
 " ==================plugins settings==============
 
@@ -466,7 +479,7 @@ if filereadable(g:ycm_global_ycm_extra_conf)
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_always_populate_location_list = 1
     " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
-    " nnoremap <silent><leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+    nnoremap <silent><buffer><C-]> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 else
     let g:loaded_youcompleteme=1
     " neocomplete Settings
@@ -476,6 +489,7 @@ else
         let g:neocomplete#data_directory = "~/.cache/neocomplete"
         inoremap <expr><C-e>     neocomplete#cancel_popup()
 		inoremap <expr><C-g>     neocomplete#undo_completion()
+		nnoremap <silent><leader>nt :NeoCompleteTagMakeCache<CR>
         " for thesaurus completion
         inoremap <silent><C-t> <C-e><C-x><C-t>
         inoremap <silent><C-o> <C-e><C-x><C-o>
@@ -510,6 +524,7 @@ vmap <silent><leader><Enter> <Plug>(EasyAlign)
 
 " ctrlp setting
 let g:ctrlp_by_filename = 1
+" Fast CtrlP matcher based on python, performance difference is up to x22
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 if filereadable(g:autoSessionFile)
     " disable default ctrlp action and always ctrlp project directory
@@ -519,9 +534,9 @@ if filereadable(g:autoSessionFile)
     let g:ctrlp_cache_dir = g:origPwd
     nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
     if has("win32")
-        let g:ctrlp_user_command = 'type %s\cscope.files'
+        let g:ctrlp_user_command = 'type %s\ctags.files'
     else
-        let g:ctrlp_user_command = 'cat %s/cscope.files'
+        let g:ctrlp_user_command = 'cat %s/ctags.files'
     endif
 else
     let g:ctrlp_use_caching = 0
@@ -530,15 +545,12 @@ endif
 
 " ag (the silver searcher) setting
 let g:ag_qhandler="copen 14"
-nmap <silent><leader>* :call AgSearch('n', 'cscope')<CR>
-vmap <silent><leader>* :call AgSearch('v', 'cscope')<CR>
+nmap <silent><leader>* :call AgSearch('n', 'ctags')<CR>
+vmap <silent><leader>* :call AgSearch('v', 'ctags')<CR>
 nmap <silent><leader># :call AgSearch('n', 'current')<CR>
 vmap <silent><leader># :call AgSearch('v', 'current')<CR>
 
 " GitGutter setting
-if has("win32") && has("gui_running")
-    let g:gitgutter_enabled = 0
-endif
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_eager = 0
 let g:gitgutter_realtime = 0
@@ -579,3 +591,28 @@ let g:jedi#rename_command = ""
 
 " wildfire
 nmap <leader>s <Plug>(wildfire-quick-select)
+
+" cscope map
+nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
+nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
+nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>	
+nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
+nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
+nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
+nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+if filereadable(g:autoSessionFile)
+    " just only read source code, need not auto complete
+    let g:JavaComplete_PluginLoaded = 1
+else
+    autocmd FileType java setlocal omnifunc=javacomplete#Complete
+endif
+
+" vim-signature: Plugin to toggle, display and navigate marks
+" m.           If no mark on line, place the next available mark. 
+"              Otherwise, remove (first) existing mark.
+" ]'           Jump to start of next line containing a mark
+" ['           Jump to start of prev line containing a mark
+" m/           Open location list and display marks from current buffer
+" m<Space>     Delete all marks from the current buffer

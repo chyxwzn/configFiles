@@ -4,7 +4,7 @@ if [[ $# -lt 1 ]]; then
     echo "Usage: `basename $0` directory update
 
         directory: source directory
-        update: update cscope database(default: 0)"
+        update: update tags(default: 0)"
     exit
 fi
 
@@ -15,10 +15,9 @@ else
     update=0
 fi
 
-ag -l --nocolor --cc --cpp --java -g "" ${src_dir} >> cscope.files
+ag -l --nocolor --cc --cpp --java -g "" ${src_dir} >> ctags.files
 
 if [[ ${update} == 1 ]]; then
-    # Generate cscope database & tags
-    cscope -bkq -i cscope.files
-    ctags --fields=+ialS --extra=+q -L cscope.files
+    # Generate tags
+    ctags --fields=+ialS --extra=+q -L ctags.files
 fi
