@@ -20,7 +20,7 @@ Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'tomtom/tcomment_vim'
-Plugin 'Valloric/YouCompleteMe'
+" Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -33,7 +33,7 @@ Plugin 'chyxwzn/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'chyxwzn/skittles_berry.vim'
 Plugin 'chyxwzn/vim-snippets'
-Plugin 'chyxwzn/vim-stardict'
+" Plugin 'chyxwzn/vim-stardict'
 Plugin 'kshenoy/vim-signature'
 Plugin 'gcmt/wildfire.vim'
 Plugin 'tpope/vim-surround'
@@ -108,7 +108,7 @@ func! AgSearch(mode, scope)
     let l:ctagsFile = getcwd() . "/.projDirs"
     if filereadable(l:ctagsFile)
         if a:scope == 'ctags'
-            let l:files = system("sed ':a;N;$!ba;s/\\n/ /g' " . l:ctagsFile)
+            let l:files = system("sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g' " . l:ctagsFile)
         else
             let l:files = bufname("%")
         endif
