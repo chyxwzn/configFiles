@@ -27,6 +27,7 @@ androidGfxSources = [
                         "frameworks/base/services/core/java/com/android/server/display/",
                         "system/core/include/system/",
                         "system/core/include/cutils/",
+                        "system/core/include/utils/",
                         "system/core/libsync/",
                         "system/core/libpixelflinger/"
                     ]
@@ -40,6 +41,8 @@ def createProjectFiles(sourceList):
         os.system("sh addsrc.sh " + sourceList[-1] + " 1")
         os.system("echo " + sourceList[-1] + " >> .projDirs")
         os.system("touch .project.vim")
+        ctrlpFiles = os.path.expandvars("$PWD").replace("/", "%") + ".txt"
+        os.system("mv ctags.files " + ctrlpFiles)
 
 projectFiles = [
                     "ctags.files",
@@ -62,8 +65,8 @@ def cleanProjectFiles():
     os.system("rm -f " + neocache + " > /dev/null 2>&1")
 
 def clearProjectFiles():
-    os.system("rm -f .project.vim > /dev/null 2>&1")
-    os.system("rm -f .viminfo.vim > /dev/null 2>&1")
+    os.system("cat /dev/null > .project.vim 2>&1")
+    os.system("cat /dev/null > .viminfo.vim 2>&1")
 
 if len(sys.argv) == 2:
     if sys.argv[1] == ".":
