@@ -13,14 +13,13 @@ Plugin 'FelikZ/ctrlp-py-matcher'
 Plugin 'chyxwzn/dictionary.vim'
 Plugin 'Konfekt/FastFold'
 Plugin 'davidhalter/jedi-vim'
-Plugin 'artur-shaik/vim-javacomplete2'
 Plugin 'tikhomirov/vim-glsl'
 Plugin 'fholgado/minibufexpl.vim'
 Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'tomtom/tcomment_vim'
-" Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -32,6 +31,7 @@ Plugin 'easymotion/vim-easymotion'
 Plugin 'chyxwzn/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'chyxwzn/skittles_berry.vim'
+Plugin 'NLKNguyen/papercolor-theme'
 Plugin 'chyxwzn/vim-snippets'
 " Plugin 'chyxwzn/vim-stardict'
 Plugin 'kshenoy/vim-signature'
@@ -39,6 +39,8 @@ Plugin 'gcmt/wildfire.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'vim-scripts/ZoomWin'
 Plugin 'aklt/plantuml-syntax'
+Plugin 'sjl/gundo.vim'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 " To ignore plugin indent changes, instead use:
@@ -49,7 +51,7 @@ call vundle#end()            " required
 " :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
 " :PluginSearch foo - searches for foo; append `!` to refresh local cache
 " :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
+" To install from command line: vim +PluginInstall +qall
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 
@@ -64,9 +66,15 @@ syntax on
 " Color Settings
 set background=dark
 " set background=light
+
 " color skittles_berry
-let g:solarized_termcolors=256
-color solarized
+
+" let g:solarized_termcolors=256
+" color solarized
+" let g:airline_theme='solarized'
+
+color PaperColor
+let g:airline_theme='papercolor'
 
 " ======= functions =======
 fun! VisualReplace() 
@@ -142,14 +150,14 @@ func! EnterHandler()
         exe "source ".g:autoSessionFile
     endif
     if filereadable(g:viminfoFile)
-        exe "rviminfo ".g:viminfoFile
+        exe "rviminfo! ".g:viminfoFile
     endif
 endfunction
 
 func! LeaveHandler()
     exec "NERDTreeClose"
     exec "mksession! ".g:origPwd."/".g:autoSessionFile
-    exec "wviminfo ".g:origPwd."/".g:viminfoFile
+    exec "wviminfo! ".g:origPwd."/".g:viminfoFile
 endfunction
 
 command! BcloseOthers call <SID>BufCloseOthers()  
@@ -168,9 +176,9 @@ endfunction
 "use foldclosed({lnum}) to tell if fold is closed or not now
 function! ToggleFold()
     if( foldclosed(".") == -1 )
-        exec "normal! zMzz"
+        exec "normal! zazz"
     else
-        exec "normal! zRzz"
+        exec "normal! zAzz"
     endif
 endfunction
 
@@ -271,19 +279,14 @@ set magic
 "show matching bracets
 set showmatch
 
-"Restore cursor to file position in previous editing session
-" set viminfo='10,\"100,:20,n~/.viminfo
-au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
-" au GUIEnter * simalt ~x " Maximize gvim window
-set sessionoptions-=curdir
-set sessionoptions+=sesdir
+set sessionoptions=buffers,globals,localoptions,sesdir,tabpages,winsize,winpos,resize
 
 "Turn backup off
 set nobackup
 set nowritebackup
 set noswapfile
 
-"Enable folding, I find it very useful
+" set nofoldenable
 set foldenable
 set foldlevel=1
 set foldmethod=syntax
@@ -296,17 +299,9 @@ set splitbelow
 set diffopt=filler,vertical
 
 set clipboard=unnamed	" yank to the system register (*) by default
-set pastetoggle=<F6>
+set pastetoggle=<F10>
 
-" => Turn persistent undo on 
-"    means that you can undo even when you close a buffer/VIM
-try
-    set undodir=~/.temp_dirs/undodir
-    set undofile
-catch
-endtry
-
-set omnifunc=syntaxcomplete#Complete
+" au GUIEnter * simalt ~x " Maximize gvim window
 
 " make type colon easily 
 nnoremap ; :
@@ -325,12 +320,11 @@ noremap Y y$
 noremap gp o<Esc>p
 nnoremap <silent>M :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
 " nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
-map <silent>K <C-u>zz
-map <silent>J <C-d>zz
-map <silent>f za
+map <silent>K <PageUp>zz
+map <silent>J <PageDown>zz
 map <silent>F :call ToggleFold()<CR>
 
-" CTRL-A is Select all
+" CTRL-A to select all
 nnoremap <C-A> ggVG
 inoremap <C-A> <C-O>gg<C-O>V<C-O>G
 vnoremap <C-A> <C-C>ggVG
@@ -401,7 +395,7 @@ nnoremap <C-l> <C-W>l
 nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
 
-nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_US<CR>
+nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_us<CR>
 nnoremap <silent><leader>cf :set fileencoding=utf8<CR>:w<CR>
 
 " auto save and load session
@@ -468,19 +462,9 @@ nnoremap <silent><leader>nf :NERDTreeFind<CR>
 let g:EasyMotion_leader_key = '<leader>'
 
 " youcompleteme setting
-let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
-let g:ycm_server_python_interpreter = 'python3'
-if filereadable(g:ycm_global_ycm_extra_conf)
-    let g:neocomplete#enable_at_startup = 0
-    let g:ycm_collect_identifiers_from_tags_files = 0
-    let g:ycm_show_diagnostics_ui = 0
-    let g:ycm_auto_start_csharp_server = 0
-    let g:ycm_key_invoke_completion = '<C-y>'
-    let g:ycm_confirm_extra_conf = 0
-    let g:ycm_always_populate_location_list = 1
-    " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
-    nnoremap <silent><buffer><C-]> :YcmCompleter GoToDefinitionElseDeclaration<CR>
-else
+" let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
+" if filereadable(g:ycm_global_ycm_extra_conf)
+if has("win32")
     let g:loaded_youcompleteme=1
     " neocomplete Settings
     if has('lua')
@@ -494,12 +478,54 @@ else
         inoremap <silent><C-t> <C-e><C-x><C-t>
         inoremap <silent><C-o> <C-e><C-x><C-o>
     endif
+
+    " Enable heavy omni completion.
+    if !exists('g:neocomplete#sources#omni#input_patterns')
+        let g:neocomplete#sources#omni#input_patterns = {}
+    endif
+    let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+    let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+    " UltiSnips setting
+    let g:UltiSnipsExpandTrigger="<C-f>"
+    let g:UltiSnipsJumpForwardTrigger="<C-f>"
+    let g:UltiSnipsJumpBackwardTrigger="<C-b>"
+
+    " jedi-vim
+    autocmd FileType python setlocal omnifunc=jedi#completions
+    let g:jedi#completions_enabled = 0
+    let g:jedi#show_call_signatures = 0
+    let g:jedi#auto_vim_configuration = 0
+    if !exists('g:neocomplete#force_omni_input_patterns')
+        let g:neocomplete#force_omni_input_patterns = {}
+    endif
+    let g:neocomplete#force_omni_input_patterns.python =
+                \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+    " alternative pattern: '\h\w*\|[^. \t]\.\w*'
+    let g:jedi#goto_command = "<leader>g"
+    let g:jedi#goto_assignments_command = "<leader>a"
+    let g:jedi#goto_definitions_command = ""
+    let g:jedi#documentation_command = "<leader>d"
+    let g:jedi#usages_command = "<leader>u"
+    let g:jedi#completions_command = ""
+    let g:jedi#rename_command = ""
+else
+    let g:neocomplete#enable_at_startup = 0
+    let g:ycm_collect_identifiers_from_tags_files = 1
+    " let g:ycm_show_diagnostics_ui = 0
+    let g:ycm_key_invoke_completion = '<C-y>'
+    let g:ycm_confirm_extra_conf = 0
+    " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
+    nnoremap <silent><C-\>] :YcmCompleter GoTo<CR>
 endif
 
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTagsmnifunc=syntaxcomplete#Complete
+
 " UltiSnips setting
-let g:UltiSnipsExpandTrigger="<C-f>"
-let g:UltiSnipsJumpForwardTrigger="<C-f>"
-let g:UltiSnipsJumpBackwardTrigger="<C-b>"
 let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 
 " tagbar setting
@@ -557,37 +583,13 @@ let g:gitgutter_realtime = 0
 nmap [h <Plug>GitGutterPrevHunk
 nmap ]h <Plug>GitGutterNextHunk
 nmap <Leader>ha <Plug>GitGutterStageHunk
-nmap <Leader>hu <Plug>GitGutterRevertHunk
-
-" surround setting
-let g:surround_{char2nr('-')} = "<% \r %>"
-let g:surround_{char2nr('=')} = "<%= \r %>"
-let g:surround_{char2nr('8')} = "/* \r */"
-let g:surround_{char2nr('s')} = " \r"
-let g:surround_{char2nr('^')} = "/^\r$/"
-let g:surround_indent = 1
+nmap <Leader>hu <Plug>GitGutterUndoHunk
 
 " StarDict
+" Need sdcv, console version of StarDict
 let g:stardict_data_dir = dictDir
-
-" jedi-vim
-autocmd FileType python setlocal omnifunc=jedi#completions
-let g:jedi#completions_enabled = 0
-let g:jedi#show_call_signatures = 0
-let g:jedi#auto_vim_configuration = 0
-if !exists('g:neocomplete#force_omni_input_patterns')
-  let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.python =
-\ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-" alternative pattern: '\h\w*\|[^. \t]\.\w*'
-let g:jedi#goto_command = "<leader>g"
-let g:jedi#goto_assignments_command = "<leader>a"
-let g:jedi#goto_definitions_command = ""
-let g:jedi#documentation_command = "<leader>d"
-let g:jedi#usages_command = "<leader>u"
-let g:jedi#completions_command = ""
-let g:jedi#rename_command = ""
+" nmap <silent><leader>sd :StarDictCursor<CR>
+" vmap <silent><leader>sd :StarDictSelect<CR>
 
 " wildfire
 nmap <leader>s <Plug>(wildfire-quick-select)
@@ -602,13 +604,6 @@ nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
-if filereadable(g:autoSessionFile)
-    " just only read source code, need not auto complete
-    let g:JavaComplete_PluginLoaded = 1
-else
-    autocmd FileType java setlocal omnifunc=javacomplete#Complete
-endif
-
 " vim-signature: Plugin to toggle, display and navigate marks
 " m.           If no mark on line, place the next available mark. 
 "              Otherwise, remove (first) existing mark.
@@ -616,3 +611,9 @@ endif
 " ['           Jump to start of prev line containing a mark
 " m/           Open location list and display marks from current buffer
 " m<Space>     Delete all marks from the current buffer
+
+" code2html
+" convert to html without line number
+" map <silent><leader>y :CodeToHtml<CR>
+" convert to html with line number
+" map <silent><leader>ny :NCodeToHtml<CR>
