@@ -251,11 +251,22 @@ source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 
 " indent options
-set expandtab
-set tabstop=4
 set shiftwidth=4
 set softtabstop=4
-set smarttab
+set expandtab
+" allow toggling between local and default mode
+function! ToggleTab()
+  if &expandtab
+    set shiftwidth=8
+    set softtabstop=0
+    set noexpandtab
+  else
+    set shiftwidth=4
+    set softtabstop=4
+    set expandtab
+  endif
+endfunction
+nmap <F9> :call ToggleTab()<CR>
 
 set linespace=0
 set history=200
