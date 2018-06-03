@@ -45,6 +45,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'vim-scripts/ZoomWin'
 Plugin 'aklt/plantuml-syntax'
 Plugin 'sjl/gundo.vim'
+Plugin 'junkblocker/patchreview-vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -634,3 +635,9 @@ nmap T :call jedi#show_documentation()<CR>
 " map <silent><leader>y :CodeToHtml<CR>
 " convert to html with line number
 " map <silent><leader>ny :NCodeToHtml<CR>
+
+"diff enhenced
+" started In Diff-Mode set diffexpr (plugin not loaded yet)
+if &diff
+    let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+endif
