@@ -32,6 +32,14 @@ androidGfxSources = [
                         "system/core/libpixelflinger/"
                     ]
 
+openglSources = [
+                    "Demo",
+                    "Common",
+                    "Vendor/glad",
+                    "Vendor/glfw",
+                    "Vendor/glm"
+                ]
+
 def createProjectFiles(sourceList):
     assert((type(sourceList) == list) and (len(sourceList) >= 1))
     for source in sourceList[:-1]:
@@ -71,6 +79,9 @@ def clearProjectFiles():
 if len(sys.argv) == 2:
     if sys.argv[1] == ".":
         sourceList = ["."]
+        createProjectFiles(sourceList)
+    elif sys.argv[1] == "gl":
+        sourceList = openglSources
         createProjectFiles(sourceList)
     elif sys.argv[1] == "gfx":
         sourceList = androidGfxSources

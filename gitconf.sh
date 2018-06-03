@@ -13,10 +13,12 @@ git config --global color.diff always
 git config --global color.grep always
 git config --global grep.linenumber true
 git config --global http.sslVerify false
-git config --global alias.d difftool
+git config --global alias.vd difftool
 git config --global alias.st status
 git config --global alias.co checkout
 git config --global alias.ci commit
 git config --global alias.br branch
 git config --global alias.unstage 'reset HEAD'
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' --abbrev-commit"
+git config --global alias.ls "diff-tree --no-commit-id --name-only -r"
+git config --global alias.dh "difftool HEAD HEAD^ --"

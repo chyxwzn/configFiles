@@ -501,30 +501,6 @@ if has("win32")
     endif
     let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
     let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-    " UltiSnips setting
-    let g:UltiSnipsExpandTrigger="<C-f>"
-    let g:UltiSnipsJumpForwardTrigger="<C-f>"
-    let g:UltiSnipsJumpBackwardTrigger="<C-b>"
-
-    " jedi-vim
-    autocmd FileType python setlocal omnifunc=jedi#completions
-    let g:jedi#completions_enabled = 0
-    let g:jedi#show_call_signatures = 0
-    let g:jedi#auto_vim_configuration = 0
-    if !exists('g:neocomplete#force_omni_input_patterns')
-        let g:neocomplete#force_omni_input_patterns = {}
-    endif
-    let g:neocomplete#force_omni_input_patterns.python =
-                \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-    " alternative pattern: '\h\w*\|[^. \t]\.\w*'
-    let g:jedi#goto_command = "<leader>g"
-    let g:jedi#goto_assignments_command = "<leader>a"
-    let g:jedi#goto_definitions_command = ""
-    let g:jedi#documentation_command = "<leader>d"
-    let g:jedi#usages_command = "<leader>u"
-    let g:jedi#completions_command = ""
-    let g:jedi#rename_command = ""
 else
     let g:neocomplete#enable_at_startup = 0
     let g:ycm_collect_identifiers_from_tags_files = 1
@@ -535,14 +511,36 @@ else
     nnoremap <silent><C-\>] :YcmCompleter GoTo<CR>
 endif
 
+" UltiSnips setting
+let g:UltiSnipsExpandTrigger="<C-f>"
+let g:UltiSnipsJumpForwardTrigger="<C-f>"
+let g:UltiSnipsJumpBackwardTrigger="<C-b>"
+let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
+
+" jedi-vim
+autocmd FileType python setlocal omnifunc=jedi#completions
+let g:jedi#completions_enabled = 0
+let g:jedi#show_call_signatures = 0
+let g:jedi#auto_vim_configuration = 0
+if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.python =
+            \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+" alternative pattern: '\h\w*\|[^. \t]\.\w*'
+let g:jedi#goto_command = "<leader>g"
+let g:jedi#goto_assignments_command = "<leader>a"
+let g:jedi#goto_definitions_command = ""
+let g:jedi#documentation_command = "<leader>d"
+let g:jedi#usages_command = "<leader>u"
+let g:jedi#completions_command = ""
+let g:jedi#rename_command = ""
+
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTagsmnifunc=syntaxcomplete#Complete
-
-" UltiSnips setting
-let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 
 " tagbar setting
 let g:tagbar_show_linenumbers = 1
@@ -619,6 +617,9 @@ nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
 nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+let g:jedi#documentation_command = ""
+nmap T :call jedi#show_documentation()<CR>
 
 " vim-signature: Plugin to toggle, display and navigate marks
 " m.           If no mark on line, place the next available mark. 
