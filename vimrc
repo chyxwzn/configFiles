@@ -13,7 +13,7 @@ endif
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'rking/ag.vim'
-Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'FelikZ/ctrlp-py-matcher'
 Plugin 'chyxwzn/dictionary.vim'
 Plugin 'Konfekt/FastFold'
@@ -547,6 +547,7 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTagsmnifunc=syntaxcom
 let g:tagbar_show_linenumbers = 1
 let g:tagbar_autofocus = 1
 let g:tagbar_foldlevel = 1
+let g:tagbar_vertical = 20
 nnoremap <silent><F2> :TagbarToggle<CR>
 
 " minibuffer setting
@@ -567,6 +568,8 @@ vmap <silent><leader><Enter> <Plug>(EasyAlign)
 let g:ctrlp_by_filename = 1
 " Fast CtrlP matcher based on python, performance difference is up to x22
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+let g:ctrlp_extensions = ['buffertag', 'tag']
+nnoremap <silent><leader>f :CtrlPBufTag<cr>
 if filereadable(g:autoSessionFile)
     " disable default ctrlp action and always ctrlp project directory
     let g:ctrlp_map = '<leader><C-p>'
