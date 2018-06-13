@@ -69,8 +69,6 @@ def cleanProjectFiles():
             else:
                 shutil.rmtree(item)
     os.system("rm -f *%*.txt > /dev/null 2>&1")
-    neocache = "~/.cache/neocomplete/tags_cache/" + (os.path.expandvars("$PWD") + "/tags").replace("/", "=+")
-    os.system("rm -f " + neocache + " > /dev/null 2>&1")
 
 def clearProjectFiles():
     os.system("cat /dev/null > .project.vim 2>&1")

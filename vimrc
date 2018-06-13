@@ -2,65 +2,54 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-if has("win32")
-    set rtp+=$HOME/vimfiles/bundle/Vundle.vim
-    call vundle#begin('$USERPROFILE/vimfiles/bundle/')
-else
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
-endif
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'rking/ag.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'FelikZ/ctrlp-py-matcher'
-Plugin 'chyxwzn/dictionary.vim'
-Plugin 'Konfekt/FastFold'
-Plugin 'davidhalter/jedi-vim'
-Plugin 'tikhomirov/vim-glsl'
-Plugin 'fholgado/minibufexpl.vim'
-Plugin 'Shougo/neocomplete.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'majutsushi/tagbar'
-Plugin 'tomtom/tcomment_vim'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'SirVer/ultisnips'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'chyxwzn/vim-code2html'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'chrisbra/vim-diff-enhanced'
-Plugin 'junegunn/vim-easy-align'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'chyxwzn/vim-fugitive'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'chyxwzn/skittles_berry.vim'
-Plugin 'NLKNguyen/papercolor-theme'
-Plugin 'chyxwzn/vim-snippets'
-" Plugin 'chyxwzn/vim-stardict'
-Plugin 'kshenoy/vim-signature'
-Plugin 'gcmt/wildfire.vim'
-Plugin 'tpope/vim-surround'
-Plugin 'vim-scripts/ZoomWin'
-Plugin 'aklt/plantuml-syntax'
-Plugin 'sjl/gundo.vim'
-Plugin 'junkblocker/patchreview-vim'
+call plug#begin()
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-" To install from command line: vim +PluginInstall +qall
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'FelikZ/ctrlp-py-matcher'
+Plug 'chyxwzn/dictionary.vim'
+Plug 'Konfekt/FastFold'
+Plug 'fholgado/minibufexpl.vim'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'majutsushi/tagbar'
+Plug 'tomtom/tcomment_vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'SirVer/ultisnips'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'chyxwzn/vim-code2html'
+Plug 'chrisbra/vim-diff-enhanced'
+Plug 'junegunn/vim-easy-align'
+Plug 'easymotion/vim-easymotion'
+Plug 'chyxwzn/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'lifepillar/vim-solarized8'
+Plug 'rakr/vim-one'
+Plug 'jacoborus/tender.vim'
+Plug 'KeitaNakamura/neodark.vim'
+Plug 'joshdick/onedark.vim'
+Plug 'chyxwzn/vim-snippets'
+Plug 'kshenoy/vim-signature'
+Plug 'gcmt/wildfire.vim'
+Plug 'tpope/vim-surround'
+Plug 'vim-scripts/ZoomWin'
+Plug 'sjl/gundo.vim'
+Plug 'junkblocker/patchreview-vim'
+Plug 'chyxwzn/FlyGrep.vim'
+Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
+Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
+Plug 'sheerun/vim-polyglot', {'for': ['markdown', 'plantuml']}
+Plug 'edkolev/promptline.vim'
+Plug 'edkolev/tmuxline.vim'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'rhysd/vim-clang-format'
+Plug 'kassio/neoterm'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
+" Initialize plugin system
+" Reload .vimrc and :PlugInstall to install plugins.
+call plug#end()
 
 " Filetype
 filetype plugin indent on
@@ -73,14 +62,19 @@ syntax on
 set background=dark
 " set background=light
 
-" color skittles_berry
+" color solarized8
+" let g:airline_theme='solarized8'
 
-" let g:solarized_termcolors=256
-" color solarized
-" let g:airline_theme='solarized'
+" color PaperColor
+" let g:airline_theme='papercolor'
 
-color PaperColor
-let g:airline_theme='papercolor'
+" color onedark
+" let g:airline_theme='onedark'
+
+color one
+let g:airline_theme='one'
+
+set termguicolors
 
 " ======= functions =======
 fun! VisualReplace() 
@@ -117,34 +111,6 @@ func! WriteFormat()
     :%s/\v\s*$//g
 endfunc
 
-func! AgSearch(mode, scope)
-    " a simple list of ctags file list
-    let l:ctagsFile = getcwd() . "/.projDirs"
-    if filereadable(l:ctagsFile)
-        if a:scope == 'ctags'
-            let l:files = system("sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g' " . l:ctagsFile)
-        else
-            let l:files = bufname("%")
-        endif
-    else
-        if a:scope == 'ctags'
-            echom "there is no ctags.files"
-            return 1
-        else
-            let l:files = bufname("%")
-        endif
-    endif
-    if a:mode == 'n'
-        let l:pattern = expand('<cword>')
-    else
-        let l:saved_reg = @"
-        execute "normal! vgvy"
-        let l:pattern = escape(@", '\\/.*$^~[]')
-        let l:pattern = substitute(l:pattern, "\n$", "", "")
-    endif
-    silent! execute 'LAg -Q ' . l:pattern . ' ' . l:files
-endfunc
-
 let g:autoSessionFile=".project.vim"
 let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
@@ -157,6 +123,10 @@ func! EnterHandler()
     endif
     if filereadable(g:viminfoFile)
         exe "rviminfo! ".g:viminfoFile
+    endif
+    let l:ctagsFile = getcwd() . "/.projDirs"
+    if filereadable(l:ctagsFile)
+        let g:projectDirs = system("sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g' " . l:ctagsFile)
     endif
 endfunction
 
@@ -212,9 +182,11 @@ set ruler " Show the line and column number of the cursor position, separated by
 set incsearch " While typing a search command, show where the pattern, as it was typed so far, matches.
 set wildmenu " When 'wildmenu' is on, command-line completion operates in an enhanced mode.
 if !has("gui_running")
-    set term=xterm-256color " colored airline
-    " Set this, so the background color will not change inside tmux (http://snk.tuxfamily.org/log/vim-256color-bce.html)
-    set t_ut=
+    if !has("nvim")
+        set term=xterm-256color " colored airline
+        " Set this, so the background color will not change inside tmux (http://snk.tuxfamily.org/log/vim-256color-bce.html)
+        set t_ut=
+    endif
 endif
 set shortmess=aAIsT
 set cmdheight=2
@@ -229,6 +201,8 @@ set hidden " hide buffers instead of closing them this
 " to background without being written; and
 " that marks and undo history are preserved
 set complete-=i
+" scan the files given with the 'dictionary' option
+set complete+=k
 set completeopt=menu
 set mousemodel=popup " Sets the model to use for the mouse.
 set backspace=indent,eol,start  " backspacing over everything in insert mode
@@ -271,6 +245,7 @@ nmap <F9> :call ToggleTab()<CR>
 
 set linespace=0
 set history=200
+set noshowmode
 
 set laststatus=2
 if has("gui_running")
@@ -405,12 +380,13 @@ vnoremap < <gv
 vnoremap > >gv
 
 "Smart way to move btw. windows
-nnoremap <C-j> <C-W>j
-nnoremap <C-k> <C-W>k
-nnoremap <C-h> <C-W>h
-nnoremap <C-l> <C-W>l
+nnoremap <A-j> <C-W>j
+nnoremap <A-k> <C-W>k
+nnoremap <A-h> <C-W>h
+nnoremap <A-l> <C-W>l
 nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
+nnoremap <silent>q :q<CR>
 
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_us<CR>
 nnoremap <silent><leader>cf :set fileencoding=utf8<CR>:w<CR>
@@ -453,8 +429,9 @@ endif
 " ==================plugins settings==============
 
 " airline setting
-let g:airline_left_sep=''
-let g:airline_right_sep=''
+"let g:airline_left_sep=''
+"let g:airline_right_sep=''
+let g:airline_powerline_fonts = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#hunks#enabled = 1
@@ -477,65 +454,48 @@ nnoremap <silent><leader>nf :NERDTreeFind<CR>
 
 " EasyMotion setting
 let g:EasyMotion_leader_key = '<leader>'
+nmap f <Plug>(easymotion-sl)
+noremap <silent><leader>w <NOP>
+noremap <silent><leader>b <NOP>
 
 " youcompleteme setting
 " let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
 " if filereadable(g:ycm_global_ycm_extra_conf)
 if has("win32")
     let g:loaded_youcompleteme=1
-    " neocomplete Settings
-    if has('lua')
-        let g:neocomplete#enable_at_startup = 1
-        let g:neocomplete#enable_ignore_case = 1
-        let g:neocomplete#data_directory = "~/.cache/neocomplete"
-        inoremap <expr><C-e>     neocomplete#cancel_popup()
-		inoremap <expr><C-g>     neocomplete#undo_completion()
-		nnoremap <silent><leader>nt :NeoCompleteTagMakeCache<CR>
-        " for thesaurus completion
-        inoremap <silent><C-t> <C-e><C-x><C-t>
-        inoremap <silent><C-o> <C-e><C-x><C-o>
-    endif
-
-    " Enable heavy omni completion.
-    if !exists('g:neocomplete#sources#omni#input_patterns')
-        let g:neocomplete#sources#omni#input_patterns = {}
-    endif
-    let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-    let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 else
-    let g:neocomplete#enable_at_startup = 0
     let g:ycm_collect_identifiers_from_tags_files = 1
     " let g:ycm_show_diagnostics_ui = 0
-    let g:ycm_key_invoke_completion = '<C-y>'
+    let g:ycm_key_list_stop_completion = ['<C-y>']
     let g:ycm_confirm_extra_conf = 0
-    " nnoremap <silent><F7> <ESC>:YcmDiags<CR>
-    nnoremap <silent><C-\>] :YcmCompleter GoTo<CR>
+    let g:ycm_semantic_triggers =  {
+			\ 'c,cpp,python': ['re!\w{2}'],
+			\ }
+    let g:ycm_add_preview_to_completeopt = 0
+    let g:ycm_min_num_identifier_candidate_chars = 2
+    let g:ycm_complete_in_strings=1
+    let g:ycm_filetype_blacklist = {
+                \ 'tagbar' : 1,
+                \ 'qf' : 1,
+                \ 'notes' : 1,
+                \ 'markdown' : 1,
+                \ 'unite' : 1,
+                \ 'text' : 1,
+                \ 'vimwiki' : 1,
+                \ 'pandoc' : 1,
+                \ 'infolog' : 1,
+                \ 'mail' : 1
+                \}
+    "nnoremap <silent><F7> <ESC>:YcmDiags<CR>
+    "nnoremap <silent><C-\>] :YcmCompleter GoTo<CR>
+    au FileType c,cpp nnoremap <buffer> <c-]> :YcmCompleter GoTo<CR>
 endif
 
 " UltiSnips setting
 let g:UltiSnipsExpandTrigger="<C-f>"
 let g:UltiSnipsJumpForwardTrigger="<C-f>"
 let g:UltiSnipsJumpBackwardTrigger="<C-b>"
-let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
-
-" jedi-vim
-autocmd FileType python setlocal omnifunc=jedi#completions
-let g:jedi#completions_enabled = 0
-let g:jedi#show_call_signatures = 0
-let g:jedi#auto_vim_configuration = 0
-if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.python =
-            \ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-" alternative pattern: '\h\w*\|[^. \t]\.\w*'
-let g:jedi#goto_command = "<leader>g"
-let g:jedi#goto_assignments_command = "<leader>a"
-let g:jedi#goto_definitions_command = ""
-let g:jedi#documentation_command = "<leader>d"
-let g:jedi#usages_command = "<leader>u"
-let g:jedi#completions_command = ""
-let g:jedi#rename_command = ""
+let g:UltiSnipsSnippetDirectories=["plugged/vim-snippets/UltiSnips"]
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -578,21 +538,21 @@ if filereadable(g:autoSessionFile)
     let g:ctrlp_cache_dir = g:origPwd
     nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
     if has("win32")
-        let g:ctrlp_user_command = 'type %s\ctags.files'
+        let g:ctrlp_user_command = 'type %s\.projDirs'
     else
-        let g:ctrlp_user_command = 'cat %s/ctags.files'
+        let g:ctrlp_user_command = 'cat %s/.projDirs'
     endif
 else
     let g:ctrlp_use_caching = 0
-    let g:ctrlp_user_command = 'ag -l --nocolor --depth 0 -g "" %s'
+    let g:ctrlp_user_command = 'ag -l --nocolor -g "" %s'
 endif
 
-" ag (the silver searcher) setting
-let g:ag_qhandler="copen 14"
-nmap <silent><leader>* :call AgSearch('n', 'ctags')<CR>
-vmap <silent><leader>* :call AgSearch('v', 'ctags')<CR>
-nmap <silent><leader># :call AgSearch('n', 'current')<CR>
-vmap <silent><leader># :call AgSearch('v', 'current')<CR>
+nmap <silent><leader>g :FlyGrep<CR>
+nmap <silent><leader>p :FlyGrepIn<CR>
+nmap <silent><leader>* :FlyGrepCIn<CR>
+vmap <silent><leader>* :FlyGrepVIn<CR>
+nmap <silent><leader># :FlyGrepBIn<CR>
+vmap <silent><leader># :FlyGrepvIn<CR>
 
 " GitGutter setting
 let g:gitgutter_highlight_lines = 0
@@ -602,12 +562,6 @@ nmap [h <Plug>GitGutterPrevHunk
 nmap ]h <Plug>GitGutterNextHunk
 nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hu <Plug>GitGutterUndoHunk
-
-" StarDict
-" Need sdcv, console version of StarDict
-let g:stardict_data_dir = dictDir
-" nmap <silent><leader>sd :StarDictCursor<CR>
-" vmap <silent><leader>sd :StarDictSelect<CR>
 
 " wildfire
 nmap <leader>s <Plug>(wildfire-quick-select)
@@ -621,9 +575,6 @@ nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
 nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-
-let g:jedi#documentation_command = ""
-nmap T :call jedi#show_documentation()<CR>
 
 " vim-signature: Plugin to toggle, display and navigate marks
 " m.           If no mark on line, place the next available mark. 
@@ -644,3 +595,27 @@ nmap T :call jedi#show_documentation()<CR>
 if &diff
     let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 endif
+
+let g:chromatica#libclang_path='/Users/shawn/.vim/plugged/YouCompleteMe/third_party/ycmd/libclang.dylib'
+let g:chromatica#enable_at_startup=1
+
+inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+let g:complete_parameter_use_ultisnips_mapping = 1
+
+let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
+let g:asyncrun_open = 10
+let g:asyncrun_status = ''
+let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
+nnoremap <silent> <F6> :AsyncRun -cwd=<root> mm<cr>
+
+let g:polyglot_disabled = ['c', 'cpp']
+
+tnoremap <Esc> <C-\><C-n>
+tnoremap <A-j> <C-\><C-n><C-W>j
+tnoremap <A-k> <C-\><C-n><C-W>k
+tnoremap <A-h> <C-\><C-n><C-W>h
+tnoremap <A-l> <C-\><C-n><C-W>l
+inoremap <A-j> <C-\><C-n><C-W>j
+inoremap <A-k> <C-\><C-n><C-W>k
+inoremap <A-h> <C-\><C-n><C-W>h
+inoremap <A-l> <C-\><C-n><C-W>l
