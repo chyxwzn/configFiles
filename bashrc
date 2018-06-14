@@ -190,3 +190,102 @@ alias DiffH='vim +"DiffReview git show HEAD --no-color -U5"'
 
 alias tarc='tar -c --use-compress-program=lbzip2 -f'
 alias tarx='tar -I lbzip2 -xf'
+[ -f ~/.shell_prompt.sh ] && source ~/.shell_prompt.sh
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+export FZF_DEFAULT_ COMMAND='ag -g ""'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+fasd_cache="$HOME/.fasd-init-bash"
+if [ "$command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
+    fasd --init posix-alias bash-hook bash-ccomp bash-ccomp-install >| "$fasd_cache"
+fi
+source "$fasd_cache"
+unset fasd_cache
+# c - including hidden directories
+c() {
+  local dir
+  dir=$(find ${1:-.} -maxdepth 1 -type d -print 2> /dev/null | fzf +m) && cd "$dir"
+}
+
+# fasd & fzf change directory - open best matched file using `fasd` if given argument, filter output of `fasd` using `fzf` else
+v() {
+    [ $# -gt 0 ] && fasd -f -e vim "$*" && return
+    local file
+    file="$(fasd -Rfl "$1" | fzf -1 -0 --no-sort +m)" && vim "${file}" || return 1
+}
+# fasd & fzf change directory - jump using `fasd` if given argument, filter output of `fasd` using `fzf` else
+unalias z 2> /dev/null
+z() {
+    [ $# -gt 0 ] && fasd_cd -d "$*" && return
+    local dir
+    dir="$(fasd -Rdl "$1" | fzf -1 -0 --no-sort +m)" && cd "${dir}" || return 1
+}
+p() {
+  local declare dirs=()
+  get_parent_dirs() {
+    if [[ -d "${1}" ]]; then dirs+=("$1"); else return; fi
+    if [[ "${1}" == '/' ]]; then
+      for _dir in "${dirs[@]}"; do echo $_dir; done
+    else
+      get_parent_dirs $(dirname "$1")
+    fi
+  }
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux --tac)
+  cd "$DIR"
+}
+# Another CTRL-T script to select a directory and paste it into line
+__fzf_select_dir ()
+{
+        builtin typeset READLINE_LINE_NEW="$(
+                command find -L . \( -path '*/\.*' -o -fstype dev -o -fstype proc \) \
+                        -prune \
+                        -o -type f -print \
+                        -o -type d -print \
+                        -o -type l -print 2>/dev/null \
+                | command sed 1d \
+                | command cut -b3- \
+                | env fzf -m
+        )"
+
+        if
+                [[ -n $READLINE_LINE_NEW ]]
+        then
+                builtin bind '"\er": redraw-current-line'
+                builtin bind '"\e^": magic-space'
+                READLINE_LINE=${READLINE_LINE:+${READLINE_LINE:0:READLINE_POINT}}${READLINE_LINE_NEW}${READLINE_LINE:+${READLINE_LINE:READLINE_POINT}}
+                READLINE_POINT=$(( READLINE_POINT + ${#READLINE_LINE_NEW} ))
+        else
+                builtin bind '"\er":'
+                builtin bind '"\e^":'
+        fi
+}
+
+builtin bind -x '"\C-x1": __fzf_select_dir'
+builtin bind '"\C-t": "\C-x1\e^\er"'
+# fbr - checkout git branch
+fbr() {
+  local branches branch
+  branches=$(git branch -vv) &&
+  branch=$(echo "$branches" | fzf +m) &&
+  git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+}
+# fcoc - checkout git commit
+fcoc() {
+  local commits commit
+  commits=$(git log --pretty=oneline --abbrev-commit --reverse) &&
+  commit=$(echo "$commits" | fzf --tac +s +m -e) &&
+  git checkout $(echo "$commit" | sed "s/ .*//")
+}
+# fshow - git commit browser
+fshow() {
+  git log --graph --color=always \
+      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
+      --bind "ctrl-m:execute:
+                (grep -o '[a-f0-9]\{7\}' | head -1 |
+                xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+                {}
+FZF-EOF"
+}
