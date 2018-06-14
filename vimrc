@@ -599,7 +599,7 @@ endif
 let g:chromatica#libclang_path='/Users/shawn/.vim/plugged/YouCompleteMe/third_party/ycmd/libclang.dylib'
 let g:chromatica#enable_at_startup=1
 
-inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+au FileType c,cpp inoremap <silent><expr> ( complete_parameter#pre_complete("()")
 let g:complete_parameter_use_ultisnips_mapping = 1
 
 let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
