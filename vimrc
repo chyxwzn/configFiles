@@ -167,13 +167,13 @@ let g:mapleader = ","
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
 if has('win32')
-    let dictDir=$HOME.'/vimfiles/bundle/dictionary.vim/'
-    set thesaurus=~/vimfiles/bundle/dictionary.vim/words
-    set dictionary=~/vimfiles/bundle/dictionary.vim/words
+    let dictDir=$HOME.'~/AppData/Local/nvim/plugged/dictionary.vim/'
+    set thesaurus=~/AppData/Local/nvim/plugged/dictionary.vim/words
+    set dictionary=~/AppData/Local/nvim/plugged/dictionary.vim/words
 else
-    let dictDir=$HOME.'/.vim/bundle/dictionary.vim/'
-    set thesaurus=~/.vim/bundle/dictionary.vim/words
-    set dictionary=~/.vim/bundle/dictionary.vim/words
+    let dictDir=$HOME.'/.config/nvim/plugged/dictionary.vim/'
+    set thesaurus=~/.config/nvim/plugged/dictionary.vim/words
+    set dictionary=~/.config/nvim/plugged/dictionary.vim/words
 endif
 "set cursorline
 " setlocal spell spelllang=en_us
@@ -530,10 +530,10 @@ let g:ctrlp_by_filename = 1
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 let g:ctrlp_extensions = ['buffertag', 'tag']
 nnoremap <silent><leader>f :CtrlPBufTag<cr>
+" disable default ctrlp action and always ctrlp project directory
+let g:ctrlp_map = '<leader><C-p>'
+let g:ctrlp_use_caching = 1
 if filereadable(g:autoSessionFile)
-    " disable default ctrlp action and always ctrlp project directory
-    let g:ctrlp_map = '<leader><C-p>'
-    let g:ctrlp_use_caching = 1
     let g:ctrlp_clear_cache_on_exit = 0
     let g:ctrlp_cache_dir = g:origPwd
     nnoremap <C-p> :exec("CtrlP ".g:origPwd)<CR>
@@ -543,8 +543,9 @@ if filereadable(g:autoSessionFile)
         let g:ctrlp_user_command = 'cat %s/.projDirs'
     endif
 else
-    let g:ctrlp_use_caching = 0
-    let g:ctrlp_user_command = 'ag -l --nocolor -g "" %s'
+    let g:ctrlp_clear_cache_on_exit = 1
+    nnoremap <C-p> :CtrlPCurWD<CR>
+    let g:ctrlp_user_command = 'rg -g "" %s --files --color never'
 endif
 
 nmap <silent><leader>g :FlyGrep<CR>
@@ -619,3 +620,14 @@ inoremap <A-j> <C-\><C-n><C-W>j
 inoremap <A-k> <C-\><C-n><C-W>k
 inoremap <A-h> <C-\><C-n><C-W>h
 inoremap <A-l> <C-\><C-n><C-W>l
+
+nnoremap <leader>/ :Blines<CR>
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'source': 'cat '.dictDir.'words', 'left': '15%'})
+

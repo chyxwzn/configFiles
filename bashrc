@@ -194,7 +194,7 @@ alias tarx='tar -I lbzip2 -xf'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-export FZF_DEFAULT_ COMMAND='ag -g ""'
+export FZF_DEFAULT_ COMMAND='rg -g "" --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 fasd_cache="$HOME/.fasd-init-bash"
