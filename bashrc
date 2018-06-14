@@ -189,3 +189,4 @@ alias DiffS='vim +"DiffReview git diff --staged --no-color -U5"'
 alias DiffH='vim +"DiffReview git show HEAD --no-color -U5"'
 
 alias tarc='tar -c --use-compress-program=lbzip2 -f'
+alias tarx='tar -I lbzip2 -xf'
