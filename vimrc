@@ -278,8 +278,8 @@ set nobackup
 set nowritebackup
 set noswapfile
 
-" set nofoldenable
-set foldenable
+set nofoldenable
+" set foldenable
 set foldlevel=1
 set foldmethod=syntax
 
@@ -513,7 +513,7 @@ nnoremap <silent><F2> :TagbarToggle<CR>
 " minibuffer setting
 " Put new window above current or on the left for vertical split
 let g:miniBufExplBRSplit = 0   
-let g:miniBufExplorerAutoStart = 1
+let g:miniBufExplorerAutoStart = 0
 nnoremap <silent><F3> :MBEToggle<cr>
 nnoremap <silent><Left> :bp<CR>
 nnoremap <silent><Right> :bn<CR>
@@ -621,7 +621,8 @@ inoremap <A-k> <C-\><C-n><C-W>k
 inoremap <A-h> <C-\><C-n><C-W>h
 inoremap <A-l> <C-\><C-n><C-W>l
 
-nnoremap <leader>/ :Blines<CR>
+nnoremap <leader>/ :BLines<CR>
+nnoremap <A-b> :Buffers<CR>
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
