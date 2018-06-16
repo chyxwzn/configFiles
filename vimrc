@@ -38,7 +38,6 @@ Plug 'junkblocker/patchreview-vim'
 Plug 'chyxwzn/FlyGrep.vim'
 Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
 Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
-Plug 'sheerun/vim-polyglot', {'for': ['markdown', 'plantuml']}
 Plug 'edkolev/promptline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'skywind3000/asyncrun.vim'
@@ -46,6 +45,9 @@ Plug 'rhysd/vim-clang-format'
 Plug 'kassio/neoterm'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'tmhedberg/SimpylFold'
+Plug 'nvie/vim-flake8'
+Plug 'vim-python/python-syntax'
 
 " Initialize plugin system
 " Reload .vimrc and :PlugInstall to install plugins.
@@ -386,7 +388,7 @@ nnoremap <A-h> <C-W>h
 nnoremap <A-l> <C-W>l
 nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
-nnoremap <silent>q :q<CR>
+nnoremap <silent><A-q> :q<CR>
 
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_us<CR>
 nnoremap <silent><leader>cf :set fileencoding=utf8<CR>:w<CR>
@@ -407,24 +409,9 @@ else
     nnoremap <silent><leader>vs :source ~/.vimrc<CR>
 endif
 
-"Quickfix and Locationlist
-nnoremap <silent><F8> :lne<CR>
-nnoremap <silent><F7> :lp<CR>
-
-if has("cscope")
-    set csprg=/usr/local/bin/cscope
-    set csto=0
-    set cst
-    set nocsverb
-    " add any database in current directory
-    if filereadable("cscope.out")
-        cs add cscope.out
-    " else add database pointed to by environment
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
-    set csverb
-endif
+au BufRead,BufNewFile *.py,*.c,*.cpp,*.h match Error /\s\+$/
+au BufRead,BufNewFile *.py set foldenable
+au BufRead,BufNewFile *.py let python_highlight_all=1
 
 " ==================plugins settings==============
 
@@ -464,6 +451,7 @@ noremap <silent><leader>b <NOP>
 if has("win32")
     let g:loaded_youcompleteme=1
 else
+    let g:ycm_python_binary_path = 'python3'
     let g:ycm_collect_identifiers_from_tags_files = 1
     " let g:ycm_show_diagnostics_ui = 0
     let g:ycm_key_list_stop_completion = ['<C-y>']
@@ -487,8 +475,9 @@ else
                 \ 'mail' : 1
                 \}
     "nnoremap <silent><F7> <ESC>:YcmDiags<CR>
-    "nnoremap <silent><C-\>] :YcmCompleter GoTo<CR>
-    au FileType c,cpp nnoremap <buffer> <c-]> :YcmCompleter GoTo<CR>
+    au FileType c,cpp,python nnoremap <buffer> <A-]> :YcmCompleter GoTo<CR>
+    au FileType c,cpp,python nnoremap <buffer> <A-d> :YcmCompleter GetDoc<CR>
+    au FileType c,cpp,python nnoremap <buffer> <A-r> :YcmCompleter GoToReferences<CR>
 endif
 
 " UltiSnips setting
@@ -496,12 +485,6 @@ let g:UltiSnipsExpandTrigger="<C-f>"
 let g:UltiSnipsJumpForwardTrigger="<C-f>"
 let g:UltiSnipsJumpBackwardTrigger="<C-b>"
 let g:UltiSnipsSnippetDirectories=["plugged/vim-snippets/UltiSnips"]
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTagsmnifunc=syntaxcomplete#Complete
 
 " tagbar setting
 let g:tagbar_show_linenumbers = 1
@@ -609,8 +592,6 @@ let g:asyncrun_status = ''
 let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
 nnoremap <silent> <F6> :AsyncRun -cwd=<root> mm<cr>
 
-let g:polyglot_disabled = ['c', 'cpp']
-
 tnoremap <Esc> <C-\><C-n>
 tnoremap <A-j> <C-\><C-n><C-W>j
 tnoremap <A-k> <C-\><C-n><C-W>k
@@ -621,7 +602,7 @@ inoremap <A-k> <C-\><C-n><C-W>k
 inoremap <A-h> <C-\><C-n><C-W>h
 inoremap <A-l> <C-\><C-n><C-W>l
 
-nnoremap <leader>/ :BLines<CR>
+nnoremap <A-/> :BLines<CR>
 nnoremap <A-b> :Buffers<CR>
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
@@ -639,3 +620,4 @@ command! -bang -nargs=* GGrep
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'source': 'cat '.dictDir.'words', 'left': '15%'})
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
+let g:SimpylFold_docstring_preview=1
