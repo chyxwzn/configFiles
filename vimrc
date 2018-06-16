@@ -386,9 +386,15 @@ nnoremap <A-j> <C-W>j
 nnoremap <A-k> <C-W>k
 nnoremap <A-h> <C-W>h
 nnoremap <A-l> <C-W>l
+" for ios termius app
+nnoremap <A-J> <C-W>j
+nnoremap <A-K> <C-W>k
+nnoremap <A-H> <C-W>h
+nnoremap <A-L> <C-W>l
 nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
 nnoremap <silent><A-q> :q<CR>
+nnoremap <silent><A-Q> :q<CR>
 
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_us<CR>
 nnoremap <silent><leader>cf :set fileencoding=utf8<CR>:w<CR>
@@ -601,9 +607,19 @@ inoremap <A-j> <C-\><C-n><C-W>j
 inoremap <A-k> <C-\><C-n><C-W>k
 inoremap <A-h> <C-\><C-n><C-W>h
 inoremap <A-l> <C-\><C-n><C-W>l
+tnoremap <A-J> <C-\><C-n><C-W>j
+tnoremap <A-K> <C-\><C-n><C-W>k
+tnoremap <A-H> <C-\><C-n><C-W>h
+tnoremap <A-L> <C-\><C-n><C-W>l
+inoremap <A-J> <C-\><C-n><C-W>j
+inoremap <A-K> <C-\><C-n><C-W>k
+inoremap <A-H> <C-\><C-n><C-W>h
+inoremap <A-L> <C-\><C-n><C-W>l
 
 nnoremap <A-/> :BLines<CR>
 nnoremap <A-b> :Buffers<CR>
+nnoremap <A-B> :Buffers<CR>
+
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
