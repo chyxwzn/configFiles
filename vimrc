@@ -35,7 +35,6 @@ Plug 'tpope/vim-surround'
 Plug 'vim-scripts/ZoomWin'
 Plug 'sjl/gundo.vim'
 Plug 'junkblocker/patchreview-vim'
-Plug 'chyxwzn/FlyGrep.vim'
 Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
 Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
 Plug 'edkolev/promptline.vim'
@@ -75,6 +74,7 @@ set background=dark
 
 color one
 let g:airline_theme='one'
+call one#highlight('Visual', '282c34', 'e5c07b', 'none')
 
 set termguicolors
 
@@ -116,6 +116,7 @@ endfunc
 let g:autoSessionFile=".project.vim"
 let g:viminfoFile=".viminfo.vim"
 let g:origPwd=getcwd()
+let g:projectDirs = '.'
 if filereadable("tags")
     setglobal tags=tags
 endif
@@ -537,13 +538,6 @@ else
     let g:ctrlp_user_command = 'rg -g "" %s --files --color never'
 endif
 
-nmap <silent><leader>g :FlyGrep<CR>
-nmap <silent><leader>p :FlyGrepIn<CR>
-nmap <silent><leader>* :FlyGrepCIn<CR>
-vmap <silent><leader>* :FlyGrepVIn<CR>
-nmap <silent><leader># :FlyGrepBIn<CR>
-vmap <silent><leader># :FlyGrepvIn<CR>
-
 " GitGutter setting
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_eager = 0
@@ -555,16 +549,6 @@ nmap <Leader>hu <Plug>GitGutterUndoHunk
 
 " wildfire
 nmap <leader>s <Plug>(wildfire-quick-select)
-
-" cscope map
-nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
-nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
-nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>	
-nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
-nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
-nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
-nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 " vim-signature: Plugin to toggle, display and navigate marks
 " m.           If no mark on line, place the next available mark. 
@@ -596,7 +580,7 @@ let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
 let g:asyncrun_open = 10
 let g:asyncrun_status = ''
 let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
-nnoremap <silent> <F6> :AsyncRun -cwd=<root> mm<cr>
+nnoremap <silent> <F6> :AsyncRun -cwd=<root> make<cr>
 
 tnoremap <Esc> <C-\><C-n>
 tnoremap <A-j> <C-\><C-n><C-W>j
@@ -620,20 +604,67 @@ nnoremap <A-/> :BLines<CR>
 nnoremap <A-b> :Buffers<CR>
 nnoremap <A-B> :Buffers<CR>
 
-command! -bang -nargs=* Rg
+"   :F  - Start fzf with hidden preview window that can be enabled with "?" key
+"   :F! - Start fzf in fullscreen and display the preview window above
+command! -bang -nargs=* F
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
+
+"   :Fp  - Start fzf with hidden preview window that can be enabled with "?" key
+"   :Fp! - Start fzf in fullscreen and display the preview window above
+command! -bang -nargs=* Fp
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>)." ".g:projectDirs, 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+function! VisualProjectSearch() range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+    :exe "Fp ".l:pattern
+endfunction
+
+function! VisualBufferSearch() range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+    :exe "BLines ".l:pattern
+endfunction
+
+nmap <silent><leader>* :exe "Fp ".expand('<cword>')<CR>
+vmap <silent><leader>* :call VisualProjectSearch()<CR>
+nmap <silent><leader># :exe "BLines ".expand('<cword>')<CR>
+vmap <silent><leader># :call VisualBufferSearch()<CR>
+
 " Command for git grep
 " - fzf#vim#grep(command, with_column, [options], [fullscreen])
-command! -bang -nargs=* GGrep
+command! -bang -nargs=* Gg
   \ call fzf#vim#grep(
   \   'git grep --line-number '.shellescape(<q-args>), 0,
   \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
 
-inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'source': 'cat '.dictDir.'words', 'left': '15%'})
+inoremap <expr> <c-x><c-k> fzf#vim#complete(
+    \ {'source': 'cat '.dictDir.'words',
+    \ 'options': ["--bind=alt-y:execute(echo {1} \| pbcopy)"],
+    \ 'left': '20%'})
+
+function! InsertWord()
+    let l:pattern = escape(@+, '\\/.*$^~[]')
+    let @+ = substitute(l:pattern, "\n$", " ", "")
+    normal! "+p
+    :exe "wincmd h"
+    startinsert
+    call feedkeys("\<A-BS>")
+endfunction
+
+tmap <silent><A-i> <C-\><C-n><C-W>l:call InsertWord()<CR>
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
 let g:SimpylFold_docstring_preview=1
