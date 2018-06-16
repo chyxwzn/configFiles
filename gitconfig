@@ -1,0 +1,39 @@
+[user]
+	name = Shawn Ding
+	email = chyxwzn@gmail.com
+[merge]
+	tool = vimdiff
+[credential]
+	helper = cache
+	helper = cache
+[diff]
+	tool = vimdiff3
+[difftool]
+	prompt = false
+[color]
+	diff = always
+	grep = always
+[grep]
+	linenumber = true
+[http]
+	sslVerify = false
+[alias]
+	st = status
+	co = checkout
+	ci = commit
+	br = branch
+	unstage = reset HEAD
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' --abbrev-commit
+	dh = difftool HEAD HEAD^ --
+	list = diff-tree --no-commit-id --name-only -r
+	vd = difftool
+	cp = cherry-pick
+[push]
+	default = simple
+[core]
+	editor = nvim
+	autocrlf = false
+[difftool "vimdiff3"]
+	path = nvim
+[mergetool "vimdiff"]
+	path = nvim
