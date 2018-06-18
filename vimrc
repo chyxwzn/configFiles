@@ -41,7 +41,7 @@ Plug 'edkolev/promptline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'rhysd/vim-clang-format'
-Plug 'kassio/neoterm'
+Plug 'vimlab/split-term.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tmhedberg/SimpylFold'
@@ -152,14 +152,36 @@ function! <SID>BufCloseOthers()
     endfor  
 endfunction
 
+"use foldlevel({lnum}) to tell if there's fold now
 "use foldclosed({lnum}) to tell if fold is closed or not now
 function! ToggleFold()
-    if( foldclosed(".") == -1 )
-        exec "normal! zazz"
-    else
-        exec "normal! zAzz"
+    if (foldlevel(".") > 0)
+        if( foldclosed(".") == -1 )
+            exec "normal! zazz"
+        else
+            exec "normal! zAzz"
+        endif
     endif
 endfunction
+
+let t:centerfocused=0
+function! ToggleCenterFocus()
+    if (t:centerfocused)
+        exec "wincmd h"
+        exec "wincmd c"
+        exec "highlight VertSplit guifg=black guibg=bg"
+        let t:centerfocused=0
+    else
+        exec "leftabove 50vnew"
+        setlocal nonumber
+        setlocal norelativenumber
+        exec "highlight VertSplit guifg=bg guibg=bg"
+        exec "highlight NonText   guifg=bg"
+        exec "wincmd l"
+        let t:centerfocused=1
+    endif
+endfunction
+nnoremap <silent><C-w>f :call ToggleCenterFocus()<CR>
 
 "============== General Settings ===============
 "Get out of VI's compatible mode..
@@ -170,18 +192,15 @@ let g:mapleader = ","
 let &t_SI="\<Esc>]50;CursorShape=1\x7"
 let &t_EI="\<Esc>]50;CursorShape=0\x7"
 if has('win32')
-    let dictDir=$HOME.'~/AppData/Local/nvim/plugged/dictionary.vim/'
-    set thesaurus=~/AppData/Local/nvim/plugged/dictionary.vim/words
-    set dictionary=~/AppData/Local/nvim/plugged/dictionary.vim/words
+    let dictDir=$HOME.'/AppData/Local/nvim/plugged/dictionary.vim/'
 else
     let dictDir=$HOME.'/.config/nvim/plugged/dictionary.vim/'
-    set thesaurus=~/.config/nvim/plugged/dictionary.vim/words
-    set dictionary=~/.config/nvim/plugged/dictionary.vim/words
+    " set thesaurus=~/.config/nvim/plugged/dictionary.vim/words
+    " set dictionary=~/.config/nvim/plugged/dictionary.vim/words
 endif
 "set cursorline
-" setlocal spell spelllang=en_us
 set showcmd " Show (partial) command in the last line of the screen.
-set ruler " Show the line and column number of the cursor position, separated by a comma.
+set noshowmode
 set incsearch " While typing a search command, show where the pattern, as it was typed so far, matches.
 set wildmenu " When 'wildmenu' is on, command-line completion operates in an enhanced mode.
 if !has("gui_running")
@@ -204,8 +223,6 @@ set hidden " hide buffers instead of closing them this
 " to background without being written; and
 " that marks and undo history are preserved
 set complete-=i
-" scan the files given with the 'dictionary' option
-set complete+=k
 set completeopt=menu
 set mousemodel=popup " Sets the model to use for the mouse.
 set backspace=indent,eol,start  " backspacing over everything in insert mode
@@ -234,21 +251,20 @@ set softtabstop=4
 set expandtab
 " allow toggling between local and default mode
 function! ToggleTab()
-  if &expandtab
-    set shiftwidth=8
-    set softtabstop=0
-    set noexpandtab
-  else
-    set shiftwidth=4
-    set softtabstop=4
-    set expandtab
-  endif
+    if &expandtab
+        set shiftwidth=8
+        set softtabstop=0
+        set noexpandtab
+    else
+        set shiftwidth=4
+        set softtabstop=4
+        set expandtab
+    endif
 endfunction
 nmap <F9> :call ToggleTab()<CR>
 
 set linespace=0
 set history=200
-set noshowmode
 
 set laststatus=2
 if has("gui_running")
@@ -305,8 +321,8 @@ vnoremap ; :
 " home row (either use 'jj' or 'jk')
 inoremap jj <ESC>
 " Treat long lines as break lines (useful when moving around in them)
-nnoremap j gj
-nnoremap k gk
+nnoremap <silent>j gj
+nnoremap <silent>k gk
 " Use shift-H and shift-L for move to beginning/end
 noremap H 0
 noremap L $
@@ -314,15 +330,14 @@ noremap Y y$
 " paster below current line
 noremap gp o<Esc>p
 nnoremap <silent>M :cal cursor(line("."), col("$")/2 + col(".")/2)<cr>
-" nnoremap <silent>M :cal cursor(line("."), (col(".") - col("^"))/2)<cr>
 map <silent>K <PageUp>zz
 map <silent>J <PageDown>zz
 map <silent>F :call ToggleFold()<CR>
 
 " CTRL-A to select all
-nnoremap <C-A> ggVG
-inoremap <C-A> <C-O>gg<C-O>V<C-O>G
-vnoremap <C-A> <C-C>ggVG
+nnoremap <silent><C-A> ggVG
+inoremap <silent><C-A> <C-O>gg<C-O>V<C-O>G
+vnoremap <silent><C-A> <C-C>ggVG
 
 " Use CTRL-S for saving, also in Insert mode
 noremap  <silent><C-S> :update<CR>
@@ -344,10 +359,10 @@ nnoremap <silent><C-n> :set number!<cr>:set relativenumber!<cr>
 nnoremap <C-Down> ddp
 nnoremap <C-Up> ddkP
 
-" Reselect text that was just pasted with ,v
-nnoremap <silent><leader>v `[v`]
+" Reselect text that was just pasted with
+nnoremap <silent><C-y> `[v`]y
 
-nnoremap <silent><leader>wf :call WriteFormat()<cr>:w!<cr>
+nnoremap <silent><leader><leader>f :call WriteFormat()<cr>:w!<cr>
 
 nnoremap <silent><leader>h :tabprevious<CR>
 nnoremap <silent><leader>l :tabnext<CR>
@@ -358,14 +373,14 @@ nnoremap <silent><leader>tc :tabclose<CR>
 "no / /\v
 
 " create a new line above and below cursor in normal mode
-nnoremap go O<ESC>jo<ESC>k
+nnoremap <silent>go O<ESC>jo<ESC>k
 
 "open tag in new window
 map <silent><leader><C-]> :set splitbelow<CR>:exec("stag ".expand("<cword>"))<CR>:res 16<CR>
 
 "Basically you press * or # to search for the current selection !! Really useful
-vnoremap <silent> * :call VisualSearch('f')<CR>
-vnoremap <silent> # :call VisualSearch('b')<CR>
+vnoremap <silent>* :call VisualSearch('f')<CR>
+vnoremap <silent># :call VisualSearch('b')<CR>
 
 "When searching for words with * and navigating with N/n, keep line centered vertically
 nnoremap G Gzz
@@ -392,13 +407,14 @@ nnoremap <A-J> <C-W>j
 nnoremap <A-K> <C-W>k
 nnoremap <A-H> <C-W>h
 nnoremap <A-L> <C-W>l
-nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
-nnoremap <silent><leader>q <ESC>:wqa<CR>
 nnoremap <silent><A-q> :q<CR>
 nnoremap <silent><A-Q> :q<CR>
 
+nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
+nnoremap <silent><leader>q <ESC>:wqa<CR>
+
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_us<CR>
-nnoremap <silent><leader>cf :set fileencoding=utf8<CR>:w<CR>
+nnoremap <silent><leader><leader>u :set fileencoding=utf8<CR>:w<CR>
 
 " auto save and load session
 if filereadable(g:autoSessionFile)
@@ -409,11 +425,11 @@ if filereadable(g:autoSessionFile)
 endif
 
 if has("win32")
-    nnoremap <silent><leader>vr :e ~/_vimrc<CR>
-    nnoremap <silent><leader>vs :source ~/_vimrc<CR>
+    nnoremap <silent><leader>vr :e ~/AppData/Local/nvim/init.vim<CR>
+    nnoremap <silent><leader>vs :source ~/AppData/Local/nvim/init.vim<CR>
 else
-    nnoremap <silent><leader>vr :e ~/.vimrc<CR>
-    nnoremap <silent><leader>vs :source ~/.vimrc<CR>
+    nnoremap <silent><leader>vr :e ~/.config/nvim/init.vim<CR>
+    nnoremap <silent><leader>vs :source ~/.config/nvim/init.vim<CR>
 endif
 
 au BufRead,BufNewFile *.py,*.c,*.cpp,*.h match Error /\s\+$/
@@ -449,8 +465,6 @@ nnoremap <silent><leader>nf :NERDTreeFind<CR>
 " EasyMotion setting
 let g:EasyMotion_leader_key = '<leader>'
 nmap f <Plug>(easymotion-sl)
-noremap <silent><leader>w <NOP>
-noremap <silent><leader>b <NOP>
 
 " youcompleteme setting
 " let g:ycm_global_ycm_extra_conf = g:origPwd.'/.ycm_extra_conf.py'
@@ -464,8 +478,8 @@ else
     let g:ycm_key_list_stop_completion = ['<C-y>']
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_semantic_triggers =  {
-			\ 'c,cpp,python': ['re!\w{2}'],
-			\ }
+                \ 'c,cpp,python': ['re!\w{2}'],
+                \ }
     let g:ycm_add_preview_to_completeopt = 0
     let g:ycm_min_num_identifier_candidate_chars = 2
     let g:ycm_complete_in_strings=1
@@ -509,7 +523,7 @@ nnoremap <silent><Left> :bp<CR>
 nnoremap <silent><Right> :bn<CR>
 nnoremap <silent><C-c> :MBEbw<CR>
 nnoremap <silent><C-W>c :MBEbw<cr>:wincmd c<cr>
-nnoremap <silent><leader>bdo :BcloseOthers<cr>
+nnoremap <silent><leader><leader>d :BcloseOthers<cr>
 
 " EasyAlign setting
 vmap <silent><leader><Enter> <Plug>(EasyAlign)
@@ -544,8 +558,8 @@ let g:gitgutter_eager = 0
 let g:gitgutter_realtime = 0
 nmap [h <Plug>GitGutterPrevHunk
 nmap ]h <Plug>GitGutterNextHunk
-nmap <Leader>ha <Plug>GitGutterStageHunk
-nmap <Leader>hu <Plug>GitGutterUndoHunk
+nmap <leader>a <Plug>GitGutterStageHunk
+nmap <leader>u <Plug>GitGutterUndoHunk
 
 " wildfire
 nmap <leader>s <Plug>(wildfire-quick-select)
@@ -582,7 +596,10 @@ let g:asyncrun_status = ''
 let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
 nnoremap <silent> <F6> :AsyncRun -cwd=<root> make<cr>
 
+" neovim terminal
 tnoremap <Esc> <C-\><C-n>
+tnoremap <A-q> <C-\><C-n><C-W>c
+tnoremap <A-Q> <C-\><C-n><C-W>c
 tnoremap <A-j> <C-\><C-n><C-W>j
 tnoremap <A-k> <C-\><C-n><C-W>k
 tnoremap <A-h> <C-\><C-n><C-W>h
@@ -607,20 +624,20 @@ nnoremap <A-B> :Buffers<CR>
 "   :F  - Start fzf with hidden preview window that can be enabled with "?" key
 "   :F! - Start fzf in fullscreen and display the preview window above
 command! -bang -nargs=* F
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+            \ call fzf#vim#grep(
+            \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+            \   <bang>0 ? fzf#vim#with_preview('up:60%')
+            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+            \   <bang>0)
 
 "   :Fp  - Start fzf with hidden preview window that can be enabled with "?" key
 "   :Fp! - Start fzf in fullscreen and display the preview window above
 command! -bang -nargs=* Fp
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>)." ".g:projectDirs, 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+            \ call fzf#vim#grep(
+            \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>)." ".g:projectDirs, 1,
+            \   <bang>0 ? fzf#vim#with_preview('up:60%')
+            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+            \   <bang>0)
 
 function! VisualProjectSearch() range
     let l:saved_reg = @"
@@ -646,14 +663,14 @@ vmap <silent><leader># :call VisualBufferSearch()<CR>
 " Command for git grep
 " - fzf#vim#grep(command, with_column, [options], [fullscreen])
 command! -bang -nargs=* Gg
-  \ call fzf#vim#grep(
-  \   'git grep --line-number '.shellescape(<q-args>), 0,
-  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+            \ call fzf#vim#grep(
+            \   'git grep --line-number '.shellescape(<q-args>), 0,
+            \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
 
 inoremap <expr> <c-x><c-k> fzf#vim#complete(
-    \ {'source': 'cat '.dictDir.'words',
-    \ 'options': ["--bind=alt-y:execute(echo {1} \| pbcopy)"],
-    \ 'left': '20%'})
+            \ {'source': 'cat '.dictDir.'words',
+            \ 'options': ["--bind=alt-y:execute(echo {1} \| pbcopy)"],
+            \ 'left': '20%'})
 
 function! InsertWord()
     let l:pattern = escape(@+, '\\/.*$^~[]')
