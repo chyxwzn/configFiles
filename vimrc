@@ -410,7 +410,6 @@ nnoremap <A-L> <C-W>l
 nnoremap <silent><A-q> :q<CR>
 nnoremap <silent><A-Q> :q<CR>
 
-nnoremap <silent><leader>= gg=G<C-O><C-O>:w<CR>
 nnoremap <silent><leader>q <ESC>:wqa<CR>
 
 nnoremap <silent><leader><leader>s :setlocal spell! spelllang=en_us<CR>
@@ -685,3 +684,16 @@ tmap <silent><A-i> <C-\><C-n><C-W>l:call InsertWord()<CR>
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
 let g:SimpylFold_docstring_preview=1
+
+let g:clang_format#style_options = {
+            \ "Language" : "Cpp",
+            \ "AlignAfterOpenBracket" : "Align",
+            \ "AllowShortIfStatementsOnASingleLine" : "false",
+            \ "AlignConsecutiveAssignments" : "true",
+            \ "AlignConsecutiveDeclarations" : "true",
+            \ "BinPackArguments" : "false",
+            \ "BreakBeforeBraces" : "Stroustrup",
+            \ "ColumnLimit" : "120",
+            \ "ReflowComments" : "true"}
+vnoremap <silent>= :ClangFormat<CR>:w<CR>
+nnoremap <silent><leader>= :ClangFormat<CR>:w<CR>
