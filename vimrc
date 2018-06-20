@@ -37,10 +37,10 @@ Plug 'sjl/gundo.vim'
 Plug 'junkblocker/patchreview-vim'
 Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
 Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
+Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'edkolev/promptline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'skywind3000/asyncrun.vim'
-Plug 'rhysd/vim-clang-format'
 Plug 'vimlab/split-term.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
