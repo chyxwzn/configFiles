@@ -9,7 +9,7 @@ Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'chyxwzn/dictionary.vim'
 Plug 'Konfekt/FastFold'
 Plug 'fholgado/minibufexpl.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
 Plug 'Valloric/YouCompleteMe'
@@ -505,6 +505,8 @@ else
     au FileType c,cpp,python nnoremap <buffer> <A-]> :YcmCompleter GoTo<CR>
     au FileType c,cpp,python nnoremap <buffer> <A-d> :YcmCompleter GetDoc<CR>
     au FileType c,cpp,python nnoremap <buffer> <A-r> :YcmCompleter GoToReferences<CR>
+    au FileType c,cpp,python nnoremap <buffer> <A-D> :YcmCompleter GetDoc<CR>
+    au FileType c,cpp,python nnoremap <buffer> <A-R> :YcmCompleter GoToReferences<CR>
 endif
 
 " UltiSnips setting
