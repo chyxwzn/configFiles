@@ -63,14 +63,14 @@ syntax on
 set background=dark
 " set background=light
 
-" color solarized8
 " let g:airline_theme='solarized8'
+" color solarized8
 
-" color PaperColor
 " let g:airline_theme='papercolor'
+" color PaperColor
 
-" color onedark
 " let g:airline_theme='onedark'
+" color onedark
 
 color one
 let g:airline_theme='one'
@@ -79,6 +79,12 @@ call one#highlight('Visual', '282c34', 'e5c07b', 'none')
 set termguicolors
 
 " ======= functions =======
+fun! PaperColorTheme()
+    let g:airline_theme='papercolor'
+    set notermguicolors
+    color PaperColor
+endfun
+
 fun! VisualReplace() 
     let l:saved_reg = @"
     execute "normal! vgvy"
@@ -363,6 +369,7 @@ nnoremap <C-Up> ddkP
 nnoremap <silent><C-y> `[v`]y
 
 nnoremap <silent><leader><leader>f :call WriteFormat()<cr>:w!<cr>
+nnoremap <silent><leader><leader>p :call PaperColorTheme()<cr>
 
 nnoremap <silent><leader>h :tabprevious<CR>
 nnoremap <silent><leader>l :tabnext<CR>
