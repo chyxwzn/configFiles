@@ -39,7 +39,7 @@ Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
 Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'edkolev/promptline.vim'
-Plug 'edkolev/tmuxline.vim'
+" Plug 'edkolev/tmuxline.vim'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'vimlab/split-term.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -137,6 +137,7 @@ func! EnterHandler()
     if filereadable(l:ctagsFile)
         let g:projectDirs = system("sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g' " . l:ctagsFile)
     endif
+    exec "MBEClose"
 endfunction
 
 func! LeaveHandler()
@@ -499,6 +500,7 @@ else
                 \ 'vimwiki' : 1,
                 \ 'pandoc' : 1,
                 \ 'infolog' : 1,
+                \ 'gitcommit' : 1,
                 \ 'mail' : 1
                 \}
     "nnoremap <silent><F7> <ESC>:YcmDiags<CR>
@@ -525,7 +527,7 @@ nnoremap <silent><F2> :TagbarToggle<CR>
 " minibuffer setting
 " Put new window above current or on the left for vertical split
 let g:miniBufExplBRSplit = 0   
-let g:miniBufExplorerAutoStart = 0
+let g:miniBufExplorerAutoStart = 1
 nnoremap <silent><F3> :MBEToggle<cr>
 nnoremap <silent><Left> :bp<CR>
 nnoremap <silent><Right> :bn<CR>
