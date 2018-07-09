@@ -11,6 +11,7 @@
 [difftool]
 	prompt = false
 [color]
+	ui = auto
 	diff = always
 	grep = always
 [grep]
@@ -25,7 +26,7 @@
 	unstage = reset HEAD
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' --abbrev-commit
 	dh = difftool HEAD HEAD^ --
-	list = diff-tree --no-commit-id --name-only -r
+	ls = diff-tree --no-commit-id --name-only -r
 	vd = difftool
 	cp = cherry-pick
 	precom = git reset --hard HEAD^
