@@ -29,7 +29,7 @@
 	ls = diff-tree --no-commit-id --name-only -r
 	vd = difftool
 	cp = cherry-pick
-	precom = git reset --hard HEAD^
+	precom = reset --hard HEAD^
 [push]
 	default = simple
 [core]
