@@ -15,7 +15,7 @@ else
     update=0
 fi
 
-ag -l --nocolor --cc --cpp --java -g "" ${src_dir} >> ctags.files
+rg -g "" --files --color never ${src_dir} >> ctags.files
 
 if [[ ${update} == 1 ]]; then
     # Generate tags
