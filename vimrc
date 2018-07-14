@@ -47,6 +47,7 @@ Plug 'vim-python/python-syntax'
 Plug 'google/vim-maktaba'
 Plug 'google/vim-glaive'
 Plug 'google/vim-codefmt'
+Plug 'google/vim-searchindex'
 
 " Initialize plugin system
 " Reload .vimrc and :PlugInstall to install plugins.
