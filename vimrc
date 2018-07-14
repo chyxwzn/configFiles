@@ -25,7 +25,6 @@ Plug 'lifepillar/vim-solarized8'
 Plug 'rakr/vim-one'
 Plug 'jacoborus/tender.vim'
 Plug 'KeitaNakamura/neodark.vim'
-Plug 'joshdick/onedark.vim'
 Plug 'chyxwzn/vim-snippets'
 Plug 'kshenoy/vim-signature'
 Plug 'gcmt/wildfire.vim'
@@ -72,8 +71,8 @@ set background=dark
 " let g:airline_theme='papercolor'
 " color PaperColor
 
-" let g:airline_theme='onedark'
-" color onedark
+" let g:airline_theme='tender'
+" color tender
 
 color one
 let g:airline_theme='one'
@@ -603,6 +602,8 @@ else
     let g:clanglib='libclang.so.6'
 endif
 let g:chromatica#libclang_path=$HOME.'/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/'.g:clanglib
+let g:chromatica#responsive_mode=1
+let g:chromatica#highlight_feature_level=1
 let g:chromatica#enable_at_startup=1
 
 au FileType c,cpp inoremap <silent><expr> ( complete_parameter#pre_complete("()")
