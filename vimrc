@@ -9,7 +9,6 @@ Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'chyxwzn/dictionary.vim'
 Plug 'Konfekt/FastFold'
 Plug 'fholgado/minibufexpl.vim'
-Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
 Plug 'Valloric/YouCompleteMe'
@@ -18,7 +17,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'chyxwzn/vim-code2html'
 Plug 'chrisbra/vim-diff-enhanced'
-Plug 'junegunn/vim-easy-align'
 Plug 'easymotion/vim-easymotion'
 Plug 'chyxwzn/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
@@ -35,11 +33,10 @@ Plug 'tpope/vim-surround'
 Plug 'vim-scripts/ZoomWin'
 Plug 'sjl/gundo.vim'
 Plug 'junkblocker/patchreview-vim'
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
 Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
-Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'edkolev/promptline.vim'
-" Plug 'edkolev/tmuxline.vim'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'vimlab/split-term.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -47,10 +44,15 @@ Plug 'junegunn/fzf.vim'
 Plug 'tmhedberg/SimpylFold'
 Plug 'nvie/vim-flake8'
 Plug 'vim-python/python-syntax'
+Plug 'google/vim-maktaba'
+Plug 'google/vim-glaive'
+Plug 'google/vim-codefmt'
 
 " Initialize plugin system
 " Reload .vimrc and :PlugInstall to install plugins.
 call plug#end()
+" the glaive#Install() should go after the "call vundle#end()"
+call glaive#Install()
 
 " Filetype
 filetype plugin indent on
@@ -137,7 +139,7 @@ func! EnterHandler()
     if filereadable(l:ctagsFile)
         let g:projectDirs = system("sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g' " . l:ctagsFile)
     endif
-    exec "MBEClose"
+    au filetype c,cpp exe "ChromaticStart"
 endfunction
 
 func! LeaveHandler()
@@ -701,15 +703,19 @@ imap <c-x><c-f> <plug>(fzf-complete-path)
 
 let g:SimpylFold_docstring_preview=1
 
-let g:clang_format#style_options = {
-            \ "Language" : "Cpp",
-            \ "AlignAfterOpenBracket" : "Align",
-            \ "AllowShortIfStatementsOnASingleLine" : "false",
-            \ "AlignConsecutiveAssignments" : "true",
-            \ "AlignConsecutiveDeclarations" : "true",
-            \ "BinPackArguments" : "false",
-            \ "BreakBeforeBraces" : "Stroustrup",
-            \ "ColumnLimit" : "120",
-            \ "ReflowComments" : "true"}
-vnoremap <silent>= :ClangFormat<CR>:w<CR>
-nnoremap <silent><leader>= :ClangFormat<CR>:w<CR>
+Glaive codefmt clang_format_style="{
+            \ BasedOnStyle: google,
+            \ Language : Cpp,
+            \ AlignAfterOpenBracket : Align,
+            \ AllowShortIfStatementsOnASingleLine : false,
+            \ AlignConsecutiveAssignments : true,
+            \ AlignConsecutiveDeclarations : true,
+            \ BinPackArguments : false,
+            \ BreakBeforeBraces : Stroustrup,
+            \ IndentWidth : 4,
+            \ ColumnLimit : 100,
+            \ ReflowComments : true}"
+autocmd FileType python AutoFormatBuffer yapf
+
+vnoremap <silent>= :FormatLines<CR>:w<CR>
+nnoremap <silent><leader>= :FormatCode<CR>:w<CR>
