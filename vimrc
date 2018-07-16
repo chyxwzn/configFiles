@@ -139,13 +139,13 @@ func! EnterHandler()
     if filereadable(l:ctagsFile)
         let g:projectDirs = system("sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g' " . l:ctagsFile)
     endif
-    au filetype c,cpp exe "ChromaticStart"
+    au filetype c,cpp exe "ChromaticaStart"
 endfunction
 
 func! LeaveHandler()
-    exec "NERDTreeClose"
-    exec "mksession! ".g:origPwd."/".g:autoSessionFile
-    exec "wviminfo! ".g:origPwd."/".g:viminfoFile
+    exe "NERDTreeClose"
+    exe "mksession! ".g:origPwd."/".g:autoSessionFile
+    exe "wviminfo! ".g:origPwd."/".g:viminfoFile
 endfunction
 
 command! BcloseOthers call <SID>BufCloseOthers()  
