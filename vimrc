@@ -596,7 +596,12 @@ if &diff
     let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 endif
 
-let g:chromatica#libclang_path=$HOME.'/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/'
+if has('macunix')
+    let g:clanglib='libclang.dylib'
+else
+    let g:clanglib='libclang.so.6'
+endif
+let g:chromatica#libclang_path=$HOME.'/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/'.g:clanglib
 let g:chromatica#responsive_mode=1
 let g:chromatica#highlight_feature_level=1
 let g:chromatica#enable_at_startup=1
