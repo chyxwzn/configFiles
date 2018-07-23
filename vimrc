@@ -47,7 +47,7 @@ Plug 'google/vim-maktaba'
 Plug 'google/vim-glaive'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-searchindex'
-Plug 'vim-scripts/vim-auto-save'
+Plug '907th/vim-auto-save'
 
 " Initialize plugin system
 " Reload .vimrc and :PlugInstall to install plugins.
@@ -723,5 +723,5 @@ vnoremap <silent>= :FormatLines<CR>:w<CR>
 nnoremap <silent><leader>= :FormatCode<CR>:w<CR>
 
 let g:auto_save=1
-let g:auto_save_no_updatetime=1
+let g:auto_save_events = ["InsertLeave"]
 let g:auto_save_silent=1
