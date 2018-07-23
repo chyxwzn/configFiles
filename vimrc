@@ -33,7 +33,7 @@ Plug 'vim-scripts/ZoomWin'
 Plug 'sjl/gundo.vim'
 Plug 'junkblocker/patchreview-vim'
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
-Plug 'arakashic/chromatica.nvim', {'for': ['c', 'cpp']}
+Plug 'chyxwzn/chromatica.nvim', {'for': ['c', 'cpp']}
 Plug 'tenfyzhong/CompleteParameter.vim', {'for': ['c', 'cpp']}
 Plug 'edkolev/promptline.vim'
 Plug 'skywind3000/asyncrun.vim'
@@ -47,6 +47,7 @@ Plug 'google/vim-maktaba'
 Plug 'google/vim-glaive'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-searchindex'
+Plug 'vim-scripts/vim-auto-save'
 
 " Initialize plugin system
 " Reload .vimrc and :PlugInstall to install plugins.
@@ -602,9 +603,8 @@ else
     let g:clanglib='libclang.so.6'
 endif
 let g:chromatica#libclang_path=$HOME.'/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/'.g:clanglib
-let g:chromatica#responsive_mode=1
-let g:chromatica#highlight_feature_level=1
 let g:chromatica#enable_at_startup=1
+nnoremap <silent><leader>c :ChromaticaToggle<cr>
 
 au FileType c,cpp inoremap <silent><expr> ( complete_parameter#pre_complete("()")
 let g:complete_parameter_use_ultisnips_mapping = 1
@@ -717,7 +717,11 @@ Glaive codefmt clang_format_style="{
             \ IndentWidth : 4,
             \ ColumnLimit : 100,
             \ ReflowComments : true}"
-autocmd FileType python AutoFormatBuffer yapf
+" autocmd FileType python AutoFormatBuffer yapf
 
 vnoremap <silent>= :FormatLines<CR>:w<CR>
 nnoremap <silent><leader>= :FormatCode<CR>:w<CR>
+
+let g:auto_save=1
+let g:auto_save_no_updatetime=1
+let g:auto_save_silent=1
