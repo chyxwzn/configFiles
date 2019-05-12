@@ -67,6 +67,7 @@ def addIgnore():
             file.close()
             return
     os.system("echo '*%*.txt' >> .gitignore")
+    os.system("echo 'compile_commands.json' >> .gitignore")
     for item in projectFiles:
         os.system("echo " + item + " >> .gitignore")
 
