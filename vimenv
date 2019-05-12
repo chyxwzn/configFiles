@@ -3,6 +3,7 @@
 import sys
 import os
 import shutil
+import re
 
 androidGfxSources = [
                         "frameworks/native/include/gui/",
@@ -40,18 +41,6 @@ openglSources = [
                     "Vendor/glm"
                 ]
 
-def createProjectFiles(sourceList):
-    assert((type(sourceList) == list) and (len(sourceList) >= 1))
-    for source in sourceList[:-1]:
-        os.system("sh addsrc.sh " + source)
-        os.system("echo " + source + " >> .projDirs")
-    else:
-        os.system("sh addsrc.sh " + sourceList[-1] + " 1")
-        os.system("echo " + sourceList[-1] + " >> .projDirs")
-        os.system("touch .project.vim")
-        ctrlpFiles = os.path.expandvars("$PWD").replace("/", "%") + ".txt"
-        os.system("mv ctags.files " + ctrlpFiles)
-
 projectFiles = [
                     "ctags.files",
                     "tags",
@@ -61,6 +50,7 @@ projectFiles = [
                     "mru",
                     "hist",
                ]
+
 def cleanProjectFiles():
     for item in projectFiles:
         if os.path.exists(item):
@@ -69,6 +59,29 @@ def cleanProjectFiles():
             else:
                 shutil.rmtree(item)
     os.system("rm -f *%*.txt > /dev/null 2>&1")
+
+def addIgnore():
+    file = open(".gitignore", "r")
+    for line in file:
+        if re.search("tags", line):
+            file.close()
+            return
+    os.system("echo '*%*.txt' >> .gitignore")
+    for item in projectFiles:
+        os.system("echo " + item + " >> .gitignore")
+
+def createProjectFiles(sourceList):
+    assert((type(sourceList) == list) and (len(sourceList) >= 1))
+    for source in sourceList[:-1]:
+        os.system("addsrc.sh " + source)
+        os.system("echo " + source + " >> .projDirs")
+    else:
+        os.system("addsrc.sh " + sourceList[-1] + " 1")
+        os.system("echo " + sourceList[-1] + " >> .projDirs")
+        os.system("touch .project.vim")
+        ctrlpFiles = os.path.expandvars("$PWD").replace("/", "%") + ".txt"
+        os.system("mv ctags.files " + ctrlpFiles)
+        addIgnore()
 
 def clearProjectFiles():
     os.system("cat /dev/null > .project.vim 2>&1")

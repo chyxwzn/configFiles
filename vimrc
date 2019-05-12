@@ -543,6 +543,7 @@ vmap <silent><leader><Enter> <Plug>(EasyAlign)
 
 " ctrlp setting
 let g:ctrlp_by_filename = 1
+let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:20,results:20'
 " Fast CtrlP matcher based on python, performance difference is up to x22
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 let g:ctrlp_extensions = ['buffertag', 'tag']
