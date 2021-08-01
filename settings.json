@@ -1,0 +1,36 @@
+{
+    "workbench.startupEditor": "none",
+    "plantuml.commandArgs": [
+        "-DPLANTUML_LIMIT_SIZE=8192"
+    ],
+    "plantuml.exportFormat": "svg",
+    "plantuml.exportSubFolder": false,
+    "editor.fontSize": 16,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "editor.fontFamily": "Noto Mono for Powerline",
+    "workbench.editor.enablePreview": false,
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google,Language : Cpp,AlignAfterOpenBracket : Align,AllowShortIfStatementsOnASingleLine : false,AlignConsecutiveAssignments : true,AlignConsecutiveDeclarations : true,BinPackArguments : false,BreakBeforeBraces : Stroustrup, IndentWidth : 4, ColumnLimit : 100, ReflowComments : true}",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "python.jediEnabled": false,
+    "update.mode": "manual",
+    "update.enableWindowsBackgroundUpdates": false,
+    "update.showReleaseNotes": false,
+    "python.languageServer": "Pylance",
+    "workbench.iconTheme": "vscode-icons",
+    "workbench.colorTheme": "One Dark Pro",
+    "python.showStartPage": false,
+    "vsicons.dontShowNewVersionMessage": true,
+    "files.associations": {
+        "*.sp": "json"
+    },
+    "remote.SSH.remotePlatform": {
+        "Ubuntu": "linux"
+    },
+    "jupyter.interactiveWindowMode": "perFile"
+}
